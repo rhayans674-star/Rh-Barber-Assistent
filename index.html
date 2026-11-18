@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RH Barber Assistente</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101114;color:#f5f5f5;font-family:Arial,sans-serif}
+header{padding:24px;background:#19171c;border-bottom:1px solid #333}
+h1{margin:0;color:#d6ad60;font-size:24px}
+header p{color:#aaa;margin-bottom:0}
+main{padding:18px;max-width:650px;margin:auto}
+.card{background:#1d1b21;border:1px solid #333;border-radius:14px;padding:18px;margin-bottom:15px}
+.label{color:#aaa;font-size:13px}
+.value{font-size:27px;font-weight:bold;margin-top:8px}
+button{background:#d6ad60;color:#171717;border:0;border-radius:10px;padding:13px;font-weight:bold;width:100%;margin-top:8px}
+input{width:100%;padding:13px;margin:8px 0;background:#29262d;border:1px solid #444;color:white;border-radius:8px}
+.client{padding:12px;border-bottom:1px solid #333}
+small{color:#aaa}
+</style>
+</head>
+<body>
+<header>
+<h1>RH Barber Assistente 💈</h1>
+<p>Seu assistente inteligente de barbearia</p>
+</header>
+<main>
+<div class="card">
+<div class="label">CLIENTES CADASTRADOS</div>
+<div class="value" id="total">0</div>
+</div>
+
+<div class="card">
+<h3>👤 Cadastrar cliente</h3>
+<input id="nome" placeholder="Nome do cliente">
+<input id="telefone" placeholder="Telefone / WhatsApp">
+<button onclick="cadastrar()">+ Cadastrar cliente</button>
+</div>
+
+<div class="card">
+<h3>📋 Minha carteira de clientes</h3>
+<div id="lista"></div>
+</div>
+</main>
+
+<script>
+let clientes=JSON.parse(localStorage.getItem("rh_clientes")||"[]");
+
+function atualizar(){
+document.getElementById("total").innerText=clientes.length;
+document.getElementById("lista").innerHTML=clientes.length
+? clientes.map(c=>`<div class="client"><b>${c.nome}</b><br><small>${c.telefone||"Sem telefone"}</small></div>`).join("")
+: "<small>Nenhum cliente cadastrado ainda.</small>";
+}
+
+function cadastrar(){
+let nome=document.getElementById("nome").value.trim();
+let telefone=document.getElementById("telefone").value.trim();
+if(!nome){alert("Digite o nome do cliente!");return;}
+clientes.push({nome,telefone});
+localStorage.setItem("rh_clientes",JSON.stringify(clientes));
+document.getElementById("nome").value="";
+document.getElementById("telefone").value="";
+atualizar();
+}
+atualizar();
+</script>
+</body>
+</html>
