@@ -381,13 +381,114 @@ function abrir(id,botao){
 function nomeCliente(id){return dados.clientes.find(c=>c.id===id)?.nome||"Cliente removido"}
 
 /* CLIENTES */
-function previewFoto(e){
- const f=e.target.files?.[0];if(!f)return;
- if(f.size>1500000)return alert("Escolha uma foto de até 1,5 MB.");
- const r=new FileReader();
- r.onload=()=>{fotoTemporaria=r.result;const p=document.getElementById("fotoPreview");p.src=fotoTemporaria;p.style.display="block"};
- r.readAsDataURL(f);
+/* NOVA FUNÇÃO: COMPRESSÃO AUTOMÁTICA DE FOTOS */
+async function previewFoto(e){
+ const f=e.target.files?.[0];
+ if(!f)return;
+
+ if(!f.type.startsWith("image/")){
+  alert("Selecione um arquivo de imagem válido.");
+  e.target.value="";
+  return;
+ }
+
+ const preview=document.getElementById("fotoPreview");
+ preview.style.display="none";
+ fotoTemporaria="";
+ aviso("Comprimindo foto, aguarde...");
+
+ try{
+  const imagem=new Image();
+  const leitor=new FileReader();
+
+  leitor.onerror=()=>{
+   alert("Não foi possível ler a foto.");
+   aviso("");
+  };
+
+  leitor.onload=()=>{
+   imagem.onerror=()=>{
+    alert("Não foi possível abrir essa imagem.");
+    aviso("");
+   };
+
+   imagem.onload=async()=>{
+    try{
+     const maxDimensao=800;
+     let largura=imagem.naturalWidth;
+     let altura=imagem.naturalHeight;
+
+     if(largura>maxDimensao||altura>maxDimensao){
+      const escala=Math.min(maxDimensao/largura,maxDimensao/altura);
+      largura=Math.round(largura*escala);
+      altura=Math.round(altura*escala);
+     }
+
+     const canvas=document.createElement("canvas");
+     const ctx=canvas.getContext("2d");
+
+     canvas.width=largura;
+     canvas.height=altura;
+
+     ctx.fillStyle="#ffffff";
+     ctx.fillRect(0,0,largura,altura);
+     ctx.drawImage(imagem,0,0,largura,altura);
+
+     let qualidade=0.82;
+     let blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",qualidade));
+
+     if(!blob)throw new Error("Falha na compressão.");
+
+     // Reduz a qualidade gradualmente caso ainda esteja muito grande
+     while(blob.size>450000&&qualidade>0.35){
+      qualidade-=0.10;
+      blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",qualidade));
+      if(!blob)throw new Error("Falha na compressão.");
+     }
+
+     // Se ainda estiver grande, reduz também a resolução
+     if(blob.size>450000){
+      const escala=0.75;
+      canvas.width=Math.round(largura*escala);
+      canvas.height=Math.round(altura*escala);
+      ctx.fillStyle="#ffffff";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(imagem,0,0,canvas.width,canvas.height);
+      blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",0.65));
+      if(!blob)throw new Error("Falha na compressão.");
+     }
+
+     const leitorFinal=new FileReader();
+     leitorFinal.onload=()=>{
+      fotoTemporaria=leitorFinal.result;
+      preview.src=fotoTemporaria;
+      preview.style.display="block";
+      aviso("Foto comprimida e pronta para salvar ("+Math.round(blob.size/1024)+" KB).");
+     };
+     leitorFinal.onerror=()=>{
+      alert("Erro ao preparar a foto.");
+      aviso("");
+     };
+     leitorFinal.readAsDataURL(blob);
+
+    }catch(err){
+     console.error(err);
+     alert("Não foi possível comprimir a foto.");
+     aviso("");
+    }
+   };
+
+   imagem.src=leitor.result;
+  };
+
+  leitor.readAsDataURL(f);
+ }catch(err){
+  console.error(err);
+  alert("Erro ao preparar a foto.");
+  aviso("");
+ }
 }
+
 async function salvarCliente(){
  const nome=document.getElementById("clienteNome").value.trim();
  if(!nome)return alert("Digite o nome do cliente.");
@@ -609,7 +710,6 @@ function importarBackup(){
    if(!obj.dados||!Array.isArray(obj.dados.clientes)||!Array.isArray(obj.dados.servicos)||!Array.isArray(obj.dados.atendimentos)||!Array.isArray(obj.dados.despesas))throw Error();
    if(!confirm("Restaurar este backup e substituir os dados da sua conta?"))return;
    dados=obj.dados;
-   // Gera identificadores UUID para registros de backups antigos.
    const mapa={};
    dados.clientes.forEach(c=>{const antigo=c.id;c.id=idNovo();mapa[antigo]=c.id});
    dados.servicos.forEach(s=>s.id=idNovo());
