@@ -1,798 +1,640 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#101114">
+<link rel="manifest" href="./manifest.json">
 <title>RH Barber Assistente</title>
 <style>
-:root{
-  --bg:#0d0d0d;--panel:#171717;--panel2:#222;
-  --gold:#d5a644;--gold2:#f1cd7a;--text:#f4f4f4;
-  --muted:#999;--green:#4dc78b;--red:#e35b5b;--border:#303030;
-}
+:root{--bg:#0d0d0d;--panel:#191919;--gold:#d5a644;--text:#f5f5f5;--muted:#999;--border:#333;--green:#176b49;--red:#572727}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
-header{padding:20px 16px;background:#141414;border-bottom:1px solid #303030}
-.brand{font-size:23px;font-weight:900;color:var(--gold)}
+header{padding:20px 15px;background:#141414;border-bottom:1px solid var(--border)}
+.brand{font-size:23px;font-weight:bold;color:var(--gold)}
 .brand span{color:white}
 header small{display:block;color:var(--muted);margin-top:5px}
-nav{display:flex;gap:7px;padding:10px;background:#121212;overflow-x:auto;position:sticky;top:0;z-index:10}
-nav button{white-space:nowrap;background:#242424;color:#eee;border:1px solid #363636;padding:11px 13px;border-radius:9px}
+main{max-width:1000px;margin:auto;padding:14px}
+nav{display:flex;gap:7px;padding:10px;background:#121212;overflow-x:auto;position:sticky;top:0;z-index:5}
+nav button{white-space:nowrap;background:#242424;color:white;border:1px solid #444;padding:11px;border-radius:8px}
 nav button.active{background:var(--gold);color:#111;font-weight:bold}
-main{max-width:1100px;margin:auto;padding:14px}
 section{display:none}
 section.active{display:block}
-h2{margin:8px 0 15px}
-h3{margin:0 0 12px}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:13px;padding:15px;margin-bottom:13px}
-.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.stat{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;min-width:0}
-.stat small{color:var(--muted);display:block;margin-bottom:8px}
-.stat strong{font-size:20px;color:var(--gold);overflow-wrap:anywhere}
-input,select,textarea{width:100%;padding:12px;background:#242424;color:white;border:1px solid #444;border-radius:9px;margin:5px 0 12px;font-size:16px}
-input[type=checkbox]{width:auto;margin:0}
+.card,.stat{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.stat small{display:block;color:var(--muted);margin-bottom:8px}
+.stat strong{font-size:19px;color:var(--gold);overflow-wrap:anywhere}
+input,select,textarea{width:100%;padding:12px;background:#252525;color:white;border:1px solid #444;border-radius:8px;margin:6px 0 12px;font-size:16px}
 label{font-size:13px;color:#ccc}
-textarea{min-height:75px;resize:vertical}
+textarea{min-height:70px}
 button{cursor:pointer}
-.btn{padding:12px;border:0;border-radius:9px;background:var(--gold);color:#111;font-weight:bold;margin:3px 0}
+.btn{padding:11px;border:0;border-radius:8px;background:var(--gold);color:#111;font-weight:bold;margin:3px 0}
 .btn.secondary{background:#333;color:white}
-.btn.danger{background:#572727;color:white}
-.btn.green{background:#176b49;color:white}
-.btn.small{padding:8px 10px;font-size:13px}
-.row{display:flex;gap:8px;align-items:center}
-.row>*{flex:1;min-width:0}
-.item{display:flex;align-items:center;gap:9px;background:#222;border-radius:10px;padding:11px;margin:8px 0;min-width:0}
-.item .info{flex:1;min-width:0}
-.item .info strong{display:block;overflow-wrap:anywhere}
-.item .info small{color:var(--muted);display:block;margin-top:4px;overflow-wrap:anywhere}
-.avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#444;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.badge{font-size:11px;padding:5px 8px;border-radius:20px;background:#333;color:#ddd;white-space:nowrap}
+.btn.green{background:var(--green);color:white}
+.btn.danger{background:var(--red);color:white}
+.btn.small{padding:8px;font-size:12px}
+.item{display:flex;align-items:center;gap:9px;background:#242424;border-radius:9px;padding:10px;margin:8px 0}
+.info{flex:1;min-width:0}
+.info strong{display:block;overflow-wrap:anywhere}
+.info small{display:block;color:var(--muted);margin-top:4px}
 .gold{color:var(--gold)}
-.muted{color:var(--muted)}
-.empty{text-align:center;color:var(--muted);padding:25px}
-.actions{display:flex;flex-wrap:wrap;gap:6px}
-.actions button{flex:1}
-.checklist{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.check{display:flex;align-items:center;gap:8px;background:#252525;padding:10px;border-radius:8px}
-.check span{flex:1}
+.muted,.empty{color:var(--muted)}
+.empty{text-align:center;padding:22px}
+.actions{display:flex;gap:7px;flex-wrap:wrap}
+.actions>*{flex:1}
+.avatar{width:46px;height:46px;border-radius:50%;object-fit:cover;background:#444;flex-shrink:0}
+.check{display:flex;align-items:center;gap:8px;background:#252525;padding:10px;border-radius:8px;margin:5px 0}
+.check input{width:auto;margin:0}
+#fotoPreview{width:85px;height:85px;border-radius:50%;object-fit:cover;display:none}
+#login{max-width:430px;margin:35px auto;padding:20px}
+#app{display:none}
+#status{font-size:12px;color:var(--muted);margin-top:8px}
 hr{border:0;border-top:1px solid #333;margin:15px 0}
-#fotoPreview{width:90px;height:90px;border-radius:50%;object-fit:cover;display:none;margin:8px 0}
-#modal{display:none;position:fixed;inset:0;background:#000b;z-index:99;overflow:auto;padding:12px}
-#modalContent{max-width:650px;margin:20px auto;background:#191919;border:1px solid #444;border-radius:14px;padding:18px}
-#graficoDias{width:100%;height:250px;display:block}
-footer{text-align:center;color:#666;padding:25px;font-size:12px}
 @media(min-width:700px){.stats{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
 <body>
+
 <header>
-  <div class="brand">RH <span>BARBER</span> ASSISTENTE</div>
-  <small>Gestão inteligente da sua barbearia</small>
+ <div class="brand">RH <span>BARBER</span> ASSISTENTE</div>
+ <small>Gestão inteligente da sua barbearia</small>
 </header>
 
+<!-- LOGIN -->
+<div id="login" class="card">
+ <h2>Bem-vindo ao RH Barber</h2>
+ <p class="muted">Entre na sua conta ou crie seu acesso.</p>
+ <label>E-mail</label>
+ <input id="email" type="email" placeholder="Seu e-mail">
+ <label>Senha</label>
+ <input id="senha" type="password" placeholder="Sua senha">
+ <button class="btn" style="width:100%" onclick="entrar()">Entrar</button>
+ <button class="btn secondary" style="width:100%" onclick="cadastrar()">Criar minha conta</button>
+ <p id="loginMsg" class="muted"></p>
+</div>
+
+<!-- APLICATIVO -->
+<div id="app">
 <nav id="menu">
-<button class="active" onclick="abrir('inicio',this)">🏠 Início</button>
-<button onclick="abrir('clientes',this)">👥 Clientes</button>
-<button onclick="abrir('atendimento',this)">✂️ Atendimento</button>
-<button onclick="abrir('servicos',this)">💈 Serviços</button>
-<button onclick="abrir('financeiro',this)">💰 Financeiro</button>
-<button onclick="abrir('estatisticas',this)">📊 Estatísticas</button>
-<button onclick="abrir('historico',this)">📋 Histórico</button>
-<button onclick="abrir('retornos',this)">🔔 Retornos</button>
-<button onclick="abrir('backup',this)">💾 Backup</button>
+ <button class="active" onclick="abrir('inicio',this)">🏠 Início</button>
+ <button onclick="abrir('clientes',this)">👥 Clientes</button>
+ <button onclick="abrir('atendimento',this)">✂️ Atendimento</button>
+ <button onclick="abrir('servicos',this)">💈 Serviços</button>
+ <button onclick="abrir('financeiro',this)">💰 Financeiro</button>
+ <button onclick="abrir('historico',this)">📋 Histórico</button>
+ <button onclick="abrir('retornos',this)">🔔 Retornos</button>
+ <button onclick="abrir('backup',this)">💾 Backup</button>
 </nav>
 
 <main>
-<!-- INÍCIO -->
 <section id="inicio" class="active">
-<h2>Visão geral</h2>
-<div class="stats">
-<div class="stat"><small>Faturamento hoje</small><strong id="hojeValor">R$ 0,00</strong></div>
-<div class="stat"><small>Faturamento do mês</small><strong id="mesValor">R$ 0,00</strong></div>
-<div class="stat"><small>Atendimentos hoje</small><strong id="hojeQtd">0</strong></div>
-<div class="stat"><small>Total de clientes</small><strong id="totalClientes">0</strong></div>
-<div class="stat"><small>Despesas do mês</small><strong id="mesDespesas">R$ 0,00</strong></div>
-<div class="stat"><small>Saldo do mês</small><strong id="mesSaldo">R$ 0,00</strong></div>
-</div>
-
-<div class="card">
-<h3>⚡ Ações rápidas</h3>
-<div class="actions">
-<button class="btn" onclick="abrir('atendimento')">+ Novo atendimento</button>
-<button class="btn secondary" onclick="abrir('clientes')">+ Clientes</button>
-<button class="btn secondary" onclick="abrir('financeiro')">+ Despesa</button>
-<button class="btn secondary" onclick="abrir('estatisticas')">📊 Estatísticas</button>
-</div>
-</div>
-
-<div class="card">
-<h3>Últimos atendimentos</h3>
-<div id="ultimosAtendimentos"></div>
-</div>
-<div class="card">
-<h3>🔔 Clientes que podem precisar voltar</h3>
-<div id="inicioRetornos"></div>
-<button class="btn secondary" onclick="abrir('retornos')">Ver lista completa</button>
-</div>
+ <h2>Visão geral</h2>
+ <div class="stats">
+  <div class="stat"><small>Faturamento hoje</small><strong id="hojeValor">R$ 0,00</strong></div>
+  <div class="stat"><small>Faturamento do mês</small><strong id="mesValor">R$ 0,00</strong></div>
+  <div class="stat"><small>Atendimentos hoje</small><strong id="hojeQtd">0</strong></div>
+  <div class="stat"><small>Total de clientes</small><strong id="totalClientes">0</strong></div>
+  <div class="stat"><small>Despesas do mês</small><strong id="mesDespesas">R$ 0,00</strong></div>
+  <div class="stat"><small>Saldo do mês</small><strong id="mesSaldo">R$ 0,00</strong></div>
+ </div>
+ <div class="card">
+  <h3>Últimos atendimentos</h3>
+  <div id="ultimos"></div>
+ </div>
+ <div class="card">
+  <h3>Clientes que podem precisar voltar</h3>
+  <div id="inicioRetornos"></div>
+  <button class="btn secondary" onclick="abrir('retornos')">Ver retornos</button>
+ </div>
 </section>
 
-<!-- CLIENTES -->
 <section id="clientes">
-<h2>Clientes</h2>
-<div class="card">
-<h3>Cadastrar cliente</h3>
-<input id="clienteNome" placeholder="Nome completo">
-<input id="clienteTelefone" type="tel" placeholder="Telefone / WhatsApp">
-<label>Foto do cliente (escolha da galeria)</label>
-<input id="clienteFoto" type="file" accept="image/*" onchange="previewFoto(event)">
-<img id="fotoPreview">
-<textarea id="clienteObs" placeholder="Observações sobre o cliente"></textarea>
-<button class="btn" onclick="salvarCliente()">Salvar cliente</button>
-</div>
-<input id="buscaCliente" placeholder="🔎 Buscar por nome ou telefone..." oninput="renderClientes()">
-<div id="listaClientes"></div>
+ <h2>Clientes</h2>
+ <div class="card">
+  <h3>Cadastrar cliente</h3>
+  <input id="clienteNome" placeholder="Nome completo">
+  <input id="clienteTelefone" placeholder="Telefone / WhatsApp">
+  <label>Foto do cliente</label>
+  <input id="clienteFoto" type="file" accept="image/*" onchange="previewFoto(event)">
+  <img id="fotoPreview">
+  <textarea id="clienteObs" placeholder="Observações"></textarea>
+  <button class="btn" onclick="salvarCliente()">Salvar cliente</button>
+ </div>
+ <input id="buscaCliente" placeholder="Buscar cliente..." oninput="renderClientes()">
+ <div id="listaClientes"></div>
 </section>
 
-<!-- ATENDIMENTO -->
 <section id="atendimento">
-<h2>Registrar atendimento realizado</h2>
-<div class="card">
-<label>Cliente</label>
-<select id="atCliente"></select>
-<button class="btn secondary small" onclick="abrir('clientes')">+ Cadastrar cliente</button>
-<hr>
-<h3>Serviços realizados</h3>
-<div id="checkServicos" class="checklist"></div>
-<label>Valor adicional (opcional)</label>
-<input id="atAdicional" type="number" min="0" step="0.01" placeholder="0,00" oninput="calcularAtendimento()">
-<label>Desconto (opcional)</label>
-<input id="atDesconto" type="number" min="0" step="0.01" placeholder="0,00" oninput="calcularAtendimento()">
-<label>Valor total cobrado</label>
-<input id="atValor" type="number" min="0" step="0.01" oninput="valorManual=true">
-<div id="atResumo" class="muted"></div>
-<label>Forma de pagamento</label>
-<select id="atPagamento">
-<option>Pix</option><option>Dinheiro</option><option>Cartão de débito</option><option>Cartão de crédito</option><option>Outro</option>
-</select>
-<label>Data do atendimento</label>
-<input id="atData" type="date">
-<label>Produtos vendidos (opcional — separe por vírgula)</label>
-<input id="atProdutos" placeholder="Ex.: Pomada, shampoo">
-<textarea id="atObs" placeholder="Observações deste atendimento"></textarea>
-<button class="btn green" onclick="salvarAtendimento()">✓ Salvar atendimento</button>
-</div>
+ <h2>Registrar atendimento realizado</h2>
+ <div class="card">
+  <label>Cliente</label>
+  <select id="atCliente"></select>
+  <h3>Serviços realizados</h3>
+  <div id="checkServicos"></div>
+  <label>Valor adicional</label>
+  <input id="atAdicional" type="number" min="0" step="0.01" value="0" oninput="calcular()">
+  <label>Desconto</label>
+  <input id="atDesconto" type="number" min="0" step="0.01" value="0" oninput="calcular()">
+  <label>Valor total cobrado</label>
+  <input id="atValor" type="number" min="0" step="0.01">
+  <p id="atResumo" class="muted"></p>
+  <label>Forma de pagamento</label>
+  <select id="atPagamento">
+   <option>Pix</option><option>Dinheiro</option><option>Cartão de débito</option><option>Cartão de crédito</option><option>Outro</option>
+  </select>
+  <label>Data do atendimento</label>
+  <input id="atData" type="date">
+  <label>Produtos vendidos</label>
+  <input id="atProdutos" placeholder="Ex.: Pomada, shampoo">
+  <textarea id="atObs" placeholder="Observações"></textarea>
+  <button class="btn green" onclick="salvarAtendimento()">Salvar atendimento</button>
+ </div>
 </section>
 
-<!-- SERVIÇOS -->
 <section id="servicos">
-<h2>Serviços e preços</h2>
-<div class="card">
-<h3>Adicionar serviço</h3>
-<input id="servNome" placeholder="Nome do serviço">
-<input id="servPreco" type="number" step="0.01" min="0" placeholder="Preço R$">
-<button class="btn" onclick="salvarServico()">Adicionar serviço</button>
-</div>
-<div id="listaServicos"></div>
+ <h2>Serviços e preços</h2>
+ <div class="card">
+  <input id="servNome" placeholder="Nome do serviço">
+  <input id="servPreco" type="number" min="0" step="0.01" placeholder="Preço R$">
+  <button class="btn" onclick="salvarServico()">Adicionar serviço</button>
+ </div>
+ <div id="listaServicos"></div>
 </section>
 
-<!-- FINANCEIRO -->
 <section id="financeiro">
-<h2>Financeiro</h2>
-<div class="stats">
-<div class="stat"><small>Entradas este mês</small><strong id="finEntradas">R$ 0,00</strong></div>
-<div class="stat"><small>Despesas este mês</small><strong id="finDespesas">R$ 0,00</strong></div>
-<div class="stat"><small>Saldo este mês</small><strong id="finSaldo">R$ 0,00</strong></div>
-<div class="stat"><small>Entradas hoje</small><strong id="finHoje">R$ 0,00</strong></div>
-</div>
-<div class="card">
-<h3>Registrar despesa</h3>
-<input id="despNome" placeholder="Descrição (ex: aluguel, produtos)">
-<input id="despValor" type="number" step="0.01" min="0" placeholder="Valor R$"><label>Data</label><input id="despData" type="date">
-<button class="btn" onclick="salvarDespesa()">Salvar despesa</button>
-</div>
-<div class="card">
-<h3>Movimentações do mês</h3>
-<div id="listaFinanceiro"></div>
-</div>
+ <h2>Financeiro</h2>
+ <div class="stats">
+  <div class="stat"><small>Entradas do mês</small><strong id="finEntradas">R$ 0,00</strong></div>
+  <div class="stat"><small>Despesas do mês</small><strong id="finDespesas">R$ 0,00</strong></div>
+  <div class="stat"><small>Saldo do mês</small><strong id="finSaldo">R$ 0,00</strong></div>
+ </div>
+ <div class="card">
+  <h3>Registrar despesa</h3>
+  <input id="despNome" placeholder="Descrição da despesa">
+  <input id="despValor" type="number" min="0" step="0.01" placeholder="Valor R$">
+  <label>Data</label>
+  <input id="despData" type="date">
+  <button class="btn" onclick="salvarDespesa()">Salvar despesa</button>
+ </div>
+ <div class="card"><h3>Movimentações do mês</h3><div id="listaFinanceiro"></div></div>
 </section>
 
-<!-- ESTATÍSTICAS -->
-<section id="estatisticas">
-<h2>📊 Estatísticas</h2>
-<div class="card">
-<label>Escolher mês para análise</label>
-<input type="month" id="statsMes" onchange="renderEstatisticas()">
-</div>
-<div class="stats">
-<div class="stat"><small>Faturamento do mês</small><strong id="stFaturamento">R$ 0,00</strong></div>
-<div class="stat"><small>Lucro estimado</small><strong id="stLucro">R$ 0,00</strong></div>
-<div class="stat"><small>Atendimentos</small><strong id="stAtendimentos">0</strong></div>
-<div class="stat"><small>Ticket médio</small><strong id="stTicket">R$ 0,00</strong></div>
-</div>
-<div class="card">
-<h3>Comparação com mês anterior</h3>
-<div class="stats">
-<div class="stat"><small>Mês anterior</small><strong id="stAnterior">R$ 0,00</strong></div>
-<div class="stat"><small>Diferença</small><strong id="stDiferenca">R$ 0,00</strong></div>
-</div>
-<p id="stComparacao" class="muted"></p>
-</div>
-<div class="card">
-<h3>📈 Faturamento por dia</h3>
-<canvas id="graficoDias"></canvas>
-<div id="stMelhorDia" class="muted"></div>
-</div>
-<div class="card">
-<h3>📅 Faturamento por semana</h3>
-<div id="stSemanas"></div>
-</div>
-<div class="card">
-<h3>✂️ Serviços mais realizados</h3>
-<div id="stServicos"></div>
-</div>
-<div class="card">
-<h3>🏆 Cliente que mais gastou neste mês</h3>
-<div id="stCliente"></div>
-</div>
-<div class="card">
-<h3>💳 Formas de pagamento</h3>
-<div id="stPagamentos"></div>
-</div>
-<div class="card">
-<h3>👥 Clientes</h3>
-<div id="stNovos"></div>
-</div>
-</section>
-
-<!-- HISTÓRICO -->
 <section id="historico">
-<h2>Histórico de atendimentos</h2>
-<input id="buscaHistorico" placeholder="Buscar cliente..." oninput="renderHistorico()">
-<div id="listaHistorico"></div>
+ <h2>Histórico de atendimentos</h2>
+ <input id="buscaHistorico" placeholder="Buscar cliente..." oninput="renderHistorico()">
+ <div id="listaHistorico"></div>
 </section>
 
-<!-- RETORNOS -->
 <section id="retornos">
-<h2>Clientes para retorno</h2>
-<div class="card">
-<p class="muted">A média de retorno é calculada automaticamente com as datas dos atendimentos. Clientes com uma única visita usam o prazo de referência abaixo.</p><label>Prazo de referência para novos clientes (dias)</label>
-<input id="diasRetorno" type="number" min="1" value="30" oninput="renderRetornos()">
-</div>
-<div id="listaRetornos"></div>
+ <h2>Clientes para retorno</h2>
+ <div class="card">
+  <p class="muted">O aplicativo calcula a média de dias entre as visitas de cada cliente.</p>
+  <label>Prazo de referência para clientes novos (dias)</label>
+  <input id="diasRetorno" type="number" min="1" value="30" oninput="renderRetornos()">
+ </div>
+ <div id="listaRetornos"></div>
 </section>
 
-<!-- BACKUP -->
 <section id="backup">
-<h2>Backup e segurança</h2>
-<div class="card">
-<p>Faça cópias dos seus dados para não perder clientes, atendimentos e informações financeiras.</p>
-<button class="btn" onclick="exportarBackup()">⬇️ Baixar backup</button>
-<hr>
-<label>Restaurar backup salvo anteriormente</label>
-<input id="arquivoBackup" type="file" accept=".json,application/json">
-<button class="btn secondary" onclick="importarBackup()">Restaurar backup</button>
-</div>
-<div class="card">
-<h3>Zona de segurança</h3>
-<p class="muted">Esta opção apaga todos os dados cadastrados neste aparelho.</p>
-<button class="btn danger" onclick="limparTudo()">Apagar todos os dados</button>
-</div>
+ <h2>Backup e segurança</h2>
+ <div class="card">
+  <p>Baixe uma cópia dos seus dados sempre que desejar.</p>
+  <button class="btn" onclick="exportarBackup()">Baixar backup</button>
+  <hr>
+  <label>Restaurar backup</label>
+  <input id="arquivoBackup" type="file" accept=".json,application/json">
+  <button class="btn secondary" onclick="importarBackup()">Restaurar backup</button>
+ </div>
+ <div class="card">
+  <p id="contaInfo" class="muted"></p>
+  <button class="btn danger" onclick="sair()">Sair da conta</button>
+ </div>
 </section>
+<p id="status"></p>
 </main>
+</div>
 
-<footer>RH Barber Assistente • Gestão inteligente da sua barbearia</footer>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* ===== DADOS E UTILITÁRIOS ===== */
-const KEY="rh_barber_v3";
+/* CONFIGURAÇÃO DO SUPABASE */
+const SUPABASE_URL="https://kmauxjdcexsbyhtdtdlz.supabase.co";
+const SUPABASE_KEY="sb_publishable_ri87zE0Sh5q2Ga9ojdHbOw_60CGo8VL";
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let usuario=null;
 let dados={clientes:[],servicos:[],atendimentos:[],despesas:[]};
 let fotoTemporaria="";
 let valorManual=false;
 
 function hoje(){
-  const d=new Date();
-  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+ const d=new Date();
+ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
 function mesAtual(){return hoje().slice(0,7)}
-function moeda(v){
-  return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-}
-function idNovo(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
-function esc(s){
-  return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
-function iniciais(nome){
-  return String(nome||"?").trim().split(/\s+/).slice(0,2).map(p=>p[0]||"").join("").toUpperCase();
-}
-function carregarDados(){
-  try{
-    const salvo=JSON.parse(localStorage.getItem(KEY)||"{}");
-    dados={
-      clientes:Array.isArray(salvo.clientes)?salvo.clientes:[],
-      servicos:Array.isArray(salvo.servicos)?salvo.servicos:[],
-      atendimentos:Array.isArray(salvo.atendimentos)?salvo.atendimentos:[],
-      despesas:Array.isArray(salvo.despesas)?salvo.despesas:[]
-    };
-  }catch(e){
-    dados={clientes:[],servicos:[],atendimentos:[],despesas:[]};
-  }
-}
-function salvarDados(){
-  localStorage.setItem(KEY,JSON.stringify(dados));
-}
-function abrir(id,botao){
-  document.querySelectorAll("main section").forEach(s=>s.classList.remove("active"));
-  const sec=document.getElementById(id);
-  if(sec)sec.classList.add("active");
-  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-  if(botao)botao.classList.add("active");
-  else{
-    const b=[...document.querySelectorAll("nav button")].find(x=>x.getAttribute("onclick")?.includes("'"+id+"'"));
-    if(b)b.classList.add("active");
-  }
-  if(id==="estatisticas")renderEstatisticas();
-}
-function clienteNome(id){
-  return dados.clientes.find(c=>c.id===id)?.nome||"Cliente removido";
+function idNovo(){return crypto.randomUUID()}
+function moeda(v){return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function aviso(msg){document.getElementById("status").innerText=msg}
+function mensagemLogin(msg){document.getElementById("loginMsg").innerText=msg}
+
+async function entrar(){
+ const email=document.getElementById("email").value.trim();
+ const password=document.getElementById("senha").value;
+ if(!email||!password)return mensagemLogin("Informe e-mail e senha.");
+ mensagemLogin("Entrando...");
+ const {error}=await sb.auth.signInWithPassword({email,password});
+ if(error)return mensagemLogin(error.message);
+ await iniciarAplicativo();
 }
 
-/* ===== CLIENTES ===== */
-function previewFoto(event){
-  const file=event.target.files?.[0];
-  if(!file)return;
-  const reader=new FileReader();
-  reader.onload=()=>{
-    fotoTemporaria=reader.result;
-    const img=document.getElementById("fotoPreview");
-    img.src=fotoTemporaria;
-    img.style.display="block";
-  };
-  reader.readAsDataURL(file);
+async function cadastrar(){
+ const email=document.getElementById("email").value.trim();
+ const password=document.getElementById("senha").value;
+ if(!email||password.length<6)return mensagemLogin("Informe e-mail e senha com pelo menos 6 caracteres.");
+ mensagemLogin("Criando sua conta...");
+ const {data,error}=await sb.auth.signUp({email,password});
+ if(error)return mensagemLogin(error.message);
+ if(!data.session){
+  mensagemLogin("Conta criada! Confira seu e-mail para confirmar o cadastro. Depois volte aqui e entre.");
+  return;
+ }
+ await iniciarAplicativo();
 }
-function salvarCliente(){
-  const nome=document.getElementById("clienteNome").value.trim();
-  const telefone=document.getElementById("clienteTelefone").value.trim();
-  const obs=document.getElementById("clienteObs").value.trim();
-  if(!nome)return alert("Digite o nome do cliente.");
-  dados.clientes.push({
-    id:idNovo(),nome,telefone,obs,foto:fotoTemporaria,criado:hoje()
-  });
-  salvarDados();
-  document.getElementById("clienteNome").value="";
-  document.getElementById("clienteTelefone").value="";
-  document.getElementById("clienteObs").value="";
-  document.getElementById("clienteFoto").value="";
-  document.getElementById("fotoPreview").style.display="none";
-  fotoTemporaria="";
+
+async function sair(){
+ if(!confirm("Deseja sair da sua conta?"))return;
+ await sb.auth.signOut();
+ usuario=null;
+ document.getElementById("app").style.display="none";
+ document.getElementById("login").style.display="block";
+ mensagemLogin("Você saiu da sua conta.");
+}
+
+async function iniciarAplicativo(){
+ const {data:{session}}=await sb.auth.getSession();
+ if(!session){document.getElementById("login").style.display="block";return}
+ usuario=session.user;
+ document.getElementById("login").style.display="none";
+ document.getElementById("app").style.display="block";
+ document.getElementById("contaInfo").innerText="Conta conectada: "+usuario.email;
+ document.getElementById("despData").value=hoje();
+ document.getElementById("atData").value=hoje();
+ aviso("Conectando e carregando seus dados...");
+ try{
+  await sb.from("barber_profiles").upsert({id:usuario.id,name:usuario.email});
+  await carregarNuvem();
   renderTudo();
-  alert("Cliente cadastrado com sucesso!");
+  aviso("Seus dados estão sincronizados com a nuvem.");
+ }catch(e){
+  aviso("Erro ao carregar os dados: "+e.message);
+ }
+}
+
+/* CARREGAR DADOS DA NUVEM */
+async function carregarNuvem(){
+ const [c,s,a,d]=await Promise.all([
+  sb.from("clients").select("*").eq("barber_id",usuario.id),
+  sb.from("services").select("*").eq("barber_id",usuario.id),
+  sb.from("visits").select("*").eq("barber_id",usuario.id),
+  sb.from("expenses").select("*").eq("barber_id",usuario.id)
+ ]);
+ for(const r of [c,s,a,d])if(r.error)throw r.error;
+
+ dados.clientes=(c.data||[]).map(x=>({
+  id:x.id,nome:x.name,telefone:x.phone||"",obs:x.notes||"",foto:x.photo_url||"",criado:(x.created_at||"").slice(0,10)||hoje()
+ }));
+ dados.servicos=(s.data||[]).map(x=>({id:x.id,nome:x.name,preco:Number(x.price||0)}));
+ dados.atendimentos=(a.data||[]).map(x=>({
+  id:x.id,clienteId:x.client_id||"",servicos:x.service_names||[],
+  servicosTexto:x.service_name||((x.service_names||[]).join(", ")),
+  valor:Number(x.amount||0),data:x.attended_on||((x.attended_at||"").slice(0,10))||hoje(),
+  pagamento:x.payment_method||"",produtos:x.products||"",obs:x.notes||"",
+  desconto:Number(x.discount||0),adicional:Number(x.additional||0)
+ }));
+ dados.despesas=(d.data||[]).map(x=>({
+  id:x.id,nome:x.description,valor:Number(x.amount||0),data:x.expense_date
+ }));
+}
+
+/* SINCRONIZAÇÃO */
+async function sincronizarTabela(tabela,linhas){
+ const {data:existentes,error}=await sb.from(tabela).select("id").eq("barber_id",usuario.id);
+ if(error)throw error;
+ const ids=new Set(linhas.map(x=>x.id));
+ for(const item of existentes||[]){
+  if(!ids.has(item.id)){
+   const {error:e}=await sb.from(tabela).delete().eq("id",item.id).eq("barber_id",usuario.id);
+   if(e)throw e;
+  }
+ }
+ if(linhas.length){
+  const {error}=await sb.from(tabela).upsert(linhas);
+  if(error)throw error;
+ }
+}
+
+async function salvarDados(){
+ if(!usuario)return;
+ aviso("Salvando na nuvem...");
+ try{
+  const clientes=dados.clientes.map(c=>({
+   id:c.id,barber_id:usuario.id,name:c.nome,phone:c.telefone,
+   photo_url:c.foto||null,notes:c.obs||null
+  }));
+  const servicos=dados.servicos.map(s=>({
+   id:s.id,barber_id:usuario.id,name:s.nome,price:s.preco
+  }));
+  const atendimentos=dados.atendimentos.map(a=>({
+   id:a.id,barber_id:usuario.id,
+   client_id:dados.clientes.some(c=>c.id===a.clienteId)?a.clienteId:null,
+   service_name:a.servicosTexto||"Serviço não especificado",
+   service_names:a.servicos||[],amount:a.valor,
+   payment_method:a.pagamento||null,notes:a.obs||null,
+   products:a.produtos||null,discount:a.desconto||0,
+   additional:a.adicional||0,attended_on:a.data||hoje()
+  }));
+  const despesas=dados.despesas.map(d=>({
+   id:d.id,barber_id:usuario.id,description:d.nome,
+   amount:d.valor,expense_date:d.data
+  }));
+  await sincronizarTabela("clients",clientes);
+  await sincronizarTabela("services",servicos);
+  await sincronizarTabela("visits",atendimentos);
+  await sincronizarTabela("expenses",despesas);
+  aviso("Salvo e sincronizado com sucesso!");
+ }catch(e){
+  console.error(e);
+  aviso("Não foi possível sincronizar: "+e.message);
+  alert("Atenção: houve um erro ao salvar na nuvem. Confira sua conexão. "+e.message);
+ }
+}
+
+/* NAVEGAÇÃO */
+function abrir(id,botao){
+ document.querySelectorAll("main section").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+ if(botao)botao.classList.add("active");
+ else [...document.querySelectorAll("nav button")].find(x=>x.getAttribute("onclick")?.includes("'"+id+"'"))?.classList.add("active");
+}
+function nomeCliente(id){return dados.clientes.find(c=>c.id===id)?.nome||"Cliente removido"}
+
+/* CLIENTES */
+function previewFoto(e){
+ const f=e.target.files?.[0];if(!f)return;
+ if(f.size>1500000)return alert("Escolha uma foto de até 1,5 MB.");
+ const r=new FileReader();
+ r.onload=()=>{fotoTemporaria=r.result;const p=document.getElementById("fotoPreview");p.src=fotoTemporaria;p.style.display="block"};
+ r.readAsDataURL(f);
+}
+async function salvarCliente(){
+ const nome=document.getElementById("clienteNome").value.trim();
+ if(!nome)return alert("Digite o nome do cliente.");
+ dados.clientes.push({
+  id:idNovo(),nome,telefone:document.getElementById("clienteTelefone").value.trim(),
+  obs:document.getElementById("clienteObs").value.trim(),foto:fotoTemporaria,criado:hoje()
+ });
+ ["clienteNome","clienteTelefone","clienteObs","clienteFoto"].forEach(id=>document.getElementById(id).value="");
+ fotoTemporaria="";document.getElementById("fotoPreview").style.display="none";
+ await salvarDados();renderTudo();alert("Cliente cadastrado!");
 }
 function renderClientes(){
-  const busca=(document.getElementById("buscaCliente")?.value||"").toLowerCase();
-  const lista=dados.clientes.filter(c=>
-    c.nome.toLowerCase().includes(busca)||(c.telefone||"").includes(busca)
-  );
-  document.getElementById("listaClientes").innerHTML=lista.map(c=>`
-    <div class="item">
-      ${c.foto?`<img class="avatar" src="${c.foto}">`:`<div class="avatar">${iniciais(c.nome)}</div>`}
-      <div class="info">
-        <strong>${esc(c.nome)}</strong>
-        <small>${esc(c.telefone||"Sem telefone")}</small>
-        <small>${esc(c.obs||"")}</small>
-      </div>
-      <div class="actions">
-        <button class="btn small secondary" onclick="editarCliente('${c.id}')">Editar</button>
-        <button class="btn small danger" onclick="excluirCliente('${c.id}')">Excluir</button>
-      </div>
-    </div>
-  `).join("")||'<div class="empty">Nenhum cliente cadastrado.</div>';
+ const busca=(document.getElementById("buscaCliente")?.value||"").toLowerCase();
+ const lista=dados.clientes.filter(c=>c.nome.toLowerCase().includes(busca)||(c.telefone||"").includes(busca));
+ document.getElementById("listaClientes").innerHTML=lista.map(c=>`
+ <div class="item">
+ ${c.foto?`<img class="avatar" src="${c.foto}">`:`<div class="avatar"></div>`}
+ <div class="info"><strong>${esc(c.nome)}</strong><small>${esc(c.telefone||"Sem telefone")}</small><small>${esc(c.obs||"")}</small></div>
+ <button class="btn small secondary" onclick="editarCliente('${c.id}')">Editar</button>
+ <button class="btn small danger" onclick="excluirCliente('${c.id}')">Excluir</button>
+ </div>`).join("")||'<div class="empty">Nenhum cliente cadastrado.</div>';
 }
-function editarCliente(id){
-  const c=dados.clientes.find(x=>x.id===id);if(!c)return;
-  const nome=prompt("Nome do cliente:",c.nome);if(nome===null)return;
-  const telefone=prompt("Telefone / WhatsApp:",c.telefone||"");if(telefone===null)return;
-  const obs=prompt("Observações:",c.obs||"");if(obs===null)return;
-  c.nome=nome.trim()||c.nome;c.telefone=telefone.trim();c.obs=obs.trim();
-  salvarDados();renderTudo();
+async function editarCliente(id){
+ const c=dados.clientes.find(x=>x.id===id);if(!c)return;
+ const n=prompt("Nome:",c.nome);if(n===null)return;
+ const t=prompt("Telefone:",c.telefone);if(t===null)return;
+ const o=prompt("Observações:",c.obs);if(o===null)return;
+ c.nome=n.trim()||c.nome;c.telefone=t.trim();c.obs=o.trim();
+ await salvarDados();renderTudo();
 }
-function excluirCliente(id){
-  if(!confirm("Excluir este cliente? O histórico de atendimentos será mantido."))return;
-  dados.clientes=dados.clientes.filter(c=>c.id!==id);
-  salvarDados();renderTudo();
+async function excluirCliente(id){
+ if(!confirm("Excluir este cliente? O histórico será mantido."))return;
+ dados.clientes=dados.clientes.filter(c=>c.id!==id);
+ await salvarDados();renderTudo();
 }
 
-/* ===== SERVIÇOS ===== */
-function salvarServico(){
-  const nome=document.getElementById("servNome").value.trim();
-  const preco=Number(document.getElementById("servPreco").value);
-  if(!nome||preco<0||!Number.isFinite(preco))return alert("Informe o nome e o preço.");
-  dados.servicos.push({id:idNovo(),nome,preco});
-  document.getElementById("servNome").value="";
-  document.getElementById("servPreco").value="";
-  salvarDados();renderTudo();
+/* SERVIÇOS */
+async function salvarServico(){
+ const nome=document.getElementById("servNome").value.trim();
+ const preco=Number(document.getElementById("servPreco").value);
+ if(!nome||!Number.isFinite(preco)||preco<0)return alert("Informe nome e preço.");
+ dados.servicos.push({id:idNovo(),nome,preco});
+ document.getElementById("servNome").value="";document.getElementById("servPreco").value="";
+ await salvarDados();renderTudo();
 }
 function renderServicos(){
-  document.getElementById("listaServicos").innerHTML=dados.servicos.map(s=>`
-    <div class="item">
-      <div class="info"><strong>${esc(s.nome)}</strong><small>${moeda(s.preco)}</small></div>
-      <button class="btn small secondary" onclick="editarServico('${s.id}')">Editar</button>
-      <button class="btn small danger" onclick="excluirServico('${s.id}')">Excluir</button>
-    </div>
-  `).join("")||'<div class="empty">Cadastre seus serviços acima.</div>';
+ document.getElementById("listaServicos").innerHTML=dados.servicos.map(s=>`
+ <div class="item"><div class="info"><strong>${esc(s.nome)}</strong><small>${moeda(s.preco)}</small></div>
+ <button class="btn small secondary" onclick="editarServico('${s.id}')">Editar</button>
+ <button class="btn small danger" onclick="excluirServico('${s.id}')">Excluir</button></div>
+ `).join("")||'<div class="empty">Cadastre seus serviços.</div>';
 }
-function editarServico(id){
-  const s=dados.servicos.find(x=>x.id===id);if(!s)return;
-  const nome=prompt("Nome do serviço:",s.nome);if(nome===null)return;
-  const preco=prompt("Preço:",s.preco);if(preco===null)return;
-  if(!nome.trim()||!Number.isFinite(Number(preco))||Number(preco)<0)return alert("Dados inválidos.");
-  s.nome=nome.trim();s.preco=Number(preco);
-  salvarDados();renderTudo();
+async function editarServico(id){
+ const s=dados.servicos.find(x=>x.id===id);if(!s)return;
+ const n=prompt("Nome:",s.nome);if(n===null)return;
+ const p=prompt("Preço:",s.preco);if(p===null)return;
+ if(!n.trim()||!Number.isFinite(Number(p))||Number(p)<0)return alert("Dados inválidos.");
+ s.nome=n.trim();s.preco=Number(p);
+ await salvarDados();renderTudo();
 }
-function excluirServico(id){
-  if(!confirm("Excluir este serviço?"))return;
-  dados.servicos=dados.servicos.filter(s=>s.id!==id);
-  salvarDados();renderTudo();
+async function excluirServico(id){
+ if(!confirm("Excluir serviço?"))return;
+ dados.servicos=dados.servicos.filter(s=>s.id!==id);
+ await salvarDados();renderTudo();
 }
 
-/* ===== ATENDIMENTOS ===== */
+/* ATENDIMENTOS */
 function prepararAtendimento(){
-  const select=document.getElementById("atCliente");
-  const atual=select.value;
-  select.innerHTML='<option value="">Selecione o cliente</option>'+dados.clientes.map(c=>
-    `<option value="${c.id}">${esc(c.nome)}</option>`
-  ).join("");
-  if(dados.clientes.some(c=>c.id===atual))select.value=atual;
-  document.getElementById("checkServicos").innerHTML=dados.servicos.map(s=>`
-    <label class="check">
-      <input type="checkbox" value="${s.id}" data-preco="${s.preco}" onchange="calcularAtendimento()">
-      <span>${esc(s.nome)} — ${moeda(s.preco)}</span>
-    </label>
-  `).join("")||'<div class="empty">Cadastre serviços primeiro.</div>';
+ const sel=document.getElementById("atCliente"),atual=sel.value;
+ sel.innerHTML='<option value="">Selecione o cliente</option>'+dados.clientes.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join("");
+ if(dados.clientes.some(c=>c.id===atual))sel.value=atual;
+ document.getElementById("checkServicos").innerHTML=dados.servicos.map(s=>`
+ <label class="check"><input type="checkbox" value="${s.id}" data-preco="${s.preco}" onchange="calcular()"><span>${esc(s.nome)} — ${moeda(s.preco)}</span></label>
+ `).join("")||'<p class="muted">Cadastre serviços primeiro.</p>';
 }
-function calcularAtendimento(){
-  const checks=[...document.querySelectorAll("#checkServicos input:checked")];
-  const subtotal=checks.reduce((s,c)=>s+Number(c.dataset.preco||0),0);
-  const adicional=Number(document.getElementById("atAdicional").value||0);
-  const desconto=Number(document.getElementById("atDesconto").value||0);
-  const total=Math.max(0,subtotal+adicional-desconto);
-  if(!valorManual)document.getElementById("atValor").value=total.toFixed(2);
-  document.getElementById("atResumo").innerText=
-    `Serviços: ${moeda(subtotal)} • Adicional: ${moeda(adicional)} • Desconto: ${moeda(desconto)}`;
+function calcular(){
+ const checks=[...document.querySelectorAll("#checkServicos input:checked")];
+ const subtotal=checks.reduce((t,c)=>t+Number(c.dataset.preco),0);
+ const adicional=Number(document.getElementById("atAdicional").value||0);
+ const desconto=Number(document.getElementById("atDesconto").value||0);
+ const total=Math.max(0,subtotal+adicional-desconto);
+ if(!valorManual)document.getElementById("atValor").value=total.toFixed(2);
+ document.getElementById("atResumo").innerText="Serviços: "+moeda(subtotal)+" | Adicional: "+moeda(adicional)+" | Desconto: "+moeda(desconto);
 }
-function salvarAtendimento(){
-  const clienteId=document.getElementById("atCliente").value;
-  if(!clienteId)return alert("Selecione um cliente.");
-  const checks=[...document.querySelectorAll("#checkServicos input:checked")];
-  const servicos=checks.map(c=>dados.servicos.find(s=>s.id===c.value)?.nome).filter(Boolean);
-  const valor=Number(document.getElementById("atValor").value||0);
-  if(!servicos.length&&!valor)return alert("Selecione um serviço ou informe o valor.");
-  const data=document.getElementById("atData").value||hoje();
-  dados.atendimentos.push({
-    id:idNovo(),clienteId,servicos,
-    servicosTexto:servicos.join(", ")||"Serviço não especificado",
-    valor,data,
-    pagamento:document.getElementById("atPagamento").value,
-    produtos:document.getElementById("atProdutos").value.trim(),
-    obs:document.getElementById("atObs").value.trim()
-  });
-  salvarDados();
-  document.querySelectorAll("#checkServicos input").forEach(c=>c.checked=false);
-  ["atAdicional","atDesconto","atValor","atProdutos","atObs"].forEach(id=>document.getElementById(id).value="");
-  valorManual=false;calcularAtendimento();
-  renderTudo();
-  alert("Atendimento registrado com sucesso!");
+async function salvarAtendimento(){
+ const clienteId=document.getElementById("atCliente").value;
+ if(!clienteId)return alert("Selecione um cliente.");
+ const checks=[...document.querySelectorAll("#checkServicos input:checked")];
+ const servicos=checks.map(c=>dados.servicos.find(s=>s.id===c.value)?.nome).filter(Boolean);
+ const valor=Number(document.getElementById("atValor").value||0);
+ if(!servicos.length&&!valor)return alert("Selecione um serviço ou informe o valor.");
+ dados.atendimentos.push({
+  id:idNovo(),clienteId,servicos,
+  servicosTexto:servicos.join(", ")||"Serviço não especificado",
+  valor,data:document.getElementById("atData").value||hoje(),
+  pagamento:document.getElementById("atPagamento").value,
+  produtos:document.getElementById("atProdutos").value.trim(),
+  obs:document.getElementById("atObs").value.trim(),
+  desconto:Number(document.getElementById("atDesconto").value||0),
+  adicional:Number(document.getElementById("atAdicional").value||0)
+ });
+ document.querySelectorAll("#checkServicos input").forEach(c=>c.checked=false);
+ ["atValor","atProdutos","atObs","atAdicional","atDesconto"].forEach(id=>document.getElementById(id).value="");
+ valorManual=false;document.getElementById("atData").value=hoje();
+ await salvarDados();renderTudo();calcular();alert("Atendimento registrado!");
 }
-function excluirAtendimento(id){
-  if(!confirm("Excluir este atendimento?"))return;
-  dados.atendimentos=dados.atendimentos.filter(a=>a.id!==id);
-  salvarDados();renderTudo();
-}/* ===== FINANCEIRO ===== */
-function salvarDespesa(){
-  const nome=document.getElementById("despNome").value.trim();
-  const valor=Number(document.getElementById("despValor").value);
-  const data=document.getElementById("despData").value||hoje();
-  if(!nome||valor<=0)return alert("Informe a descrição e um valor válido.");
-  dados.despesas.push({id:idNovo(),nome,valor,data});
-  document.getElementById("despNome").value="";
-  document.getElementById("despValor").value="";
-  document.getElementById("despData").value=hoje();
-  salvarDados();renderTudo();
+async function excluirAtendimento(id){
+ if(!confirm("Excluir este atendimento?"))return;
+ dados.atendimentos=dados.atendimentos.filter(a=>a.id!==id);
+ await salvarDados();renderTudo();
 }
-function excluirDespesa(id){
-  if(!confirm("Excluir esta despesa?"))return;
-  dados.despesas=dados.despesas.filter(d=>d.id!==id);
-  salvarDados();renderTudo();
+
+/* FINANCEIRO */
+async function salvarDespesa(){
+ const nome=document.getElementById("despNome").value.trim(),valor=Number(document.getElementById("despValor").value);
+ if(!nome||valor<=0)return alert("Informe descrição e valor.");
+ dados.despesas.push({id:idNovo(),nome,valor,data:document.getElementById("despData").value||hoje()});
+ document.getElementById("despNome").value="";document.getElementById("despValor").value="";
+ await salvarDados();renderTudo();
+}
+async function excluirDespesa(id){
+ if(!confirm("Excluir despesa?"))return;
+ dados.despesas=dados.despesas.filter(d=>d.id!==id);
+ await salvarDados();renderTudo();
 }
 function renderFin(){
-  const mes=mesAtual();
-  const entradas=dados.atendimentos.filter(a=>a.data.startsWith(mes)).reduce((s,a)=>s+Number(a.valor||0),0);
-  const despesas=dados.despesas.filter(d=>d.data.startsWith(mes)).reduce((s,d)=>s+Number(d.valor||0),0);
-  const hojeEntradas=dados.atendimentos.filter(a=>a.data===hoje()).reduce((s,a)=>s+Number(a.valor||0),0);
-  document.getElementById("hojeValor").innerText=moeda(hojeEntradas);
-  document.getElementById("mesValor").innerText=moeda(entradas);
-  document.getElementById("mesDespesas").innerText=moeda(despesas);
-  document.getElementById("mesSaldo").innerText=moeda(entradas-despesas);
-  document.getElementById("finEntradas").innerText=moeda(entradas);
-  document.getElementById("finDespesas").innerText=moeda(despesas);
-  document.getElementById("finSaldo").innerText=moeda(entradas-despesas);
-  document.getElementById("finHoje").innerText=moeda(hojeEntradas);
-  const mov=[
-    ...dados.atendimentos.filter(a=>a.data.startsWith(mes)).map(a=>({data:a.data,nome:"Atendimento — "+clienteNome(a.clienteId),valor:a.valor,tipo:"entrada",id:a.id})),
-    ...dados.despesas.filter(d=>d.data.startsWith(mes)).map(d=>({data:d.data,nome:d.nome,valor:d.valor,tipo:"despesa",id:d.id}))
-  ].sort((a,b)=>b.data.localeCompare(a.data));
-  document.getElementById("listaFinanceiro").innerHTML=mov.map(m=>`
-    <div class="item">
-      <div class="info"><strong>${esc(m.nome)}</strong><small>${esc(m.data)}</small></div>
-      <strong class="${m.tipo==="entrada"?"gold":"muted"}">${m.tipo==="entrada"?"+":"-"} ${moeda(m.valor)}</strong>
-      <button class="btn small danger" onclick="${m.tipo==="entrada"?"excluirAtendimento":"excluirDespesa"}('${m.id}')">Excluir</button>
-    </div>
-  `).join("")||'<div class="empty">Nenhuma movimentação neste mês.</div>';
+ const mes=mesAtual();
+ const ats=dados.atendimentos.filter(a=>a.data.startsWith(mes));
+ const des=dados.despesas.filter(d=>d.data.startsWith(mes));
+ const entradas=ats.reduce((s,a)=>s+a.valor,0),despesas=des.reduce((s,d)=>s+d.valor,0);
+ const hojeTotal=dados.atendimentos.filter(a=>a.data===hoje()).reduce((s,a)=>s+a.valor,0);
+ document.getElementById("hojeValor").innerText=moeda(hojeTotal);
+ document.getElementById("mesValor").innerText=moeda(entradas);
+ document.getElementById("mesDespesas").innerText=moeda(despesas);
+ document.getElementById("mesSaldo").innerText=moeda(entradas-despesas);
+ document.getElementById("finEntradas").innerText=moeda(entradas);
+ document.getElementById("finDespesas").innerText=moeda(despesas);
+ document.getElementById("finSaldo").innerText=moeda(entradas-despesas);
+ const mov=[
+ ...ats.map(a=>({id:a.id,data:a.data,nome:"Atendimento — "+nomeCliente(a.clienteId),valor:a.valor,tipo:"at"})),
+ ...des.map(d=>({id:d.id,data:d.data,nome:d.nome,valor:d.valor,tipo:"des"}))
+ ].sort((a,b)=>b.data.localeCompare(a.data));
+ document.getElementById("listaFinanceiro").innerHTML=mov.map(m=>`
+ <div class="item"><div class="info"><strong>${esc(m.nome)}</strong><small>${m.data}</small></div>
+ <strong class="gold">${m.tipo==="at"?"+":"-"} ${moeda(m.valor)}</strong>
+ <button class="btn small danger" onclick="${m.tipo==="at"?"excluirAtendimento":"excluirDespesa"}('${m.id}')">Excluir</button></div>
+ `).join("")||'<div class="empty">Nenhuma movimentação.</div>';
 }
 
-/* ===== HISTÓRICO ===== */
+/* HISTÓRICO */
 function renderHistorico(){
-  const busca=(document.getElementById("buscaHistorico")?.value||"").toLowerCase();
-  const lista=dados.atendimentos.slice().sort((a,b)=>b.data.localeCompare(a.data)).filter(a=>
-    clienteNome(a.clienteId).toLowerCase().includes(busca)
-  );
-  document.getElementById("listaHistorico").innerHTML=lista.map(a=>`
-    <div class="item">
-      <div class="info">
-        <strong>${esc(clienteNome(a.clienteId))}</strong>
-        <small>${esc(a.data)} • ${esc(a.servicosTexto)}</small>
-        <small>Pagamento: ${esc(a.pagamento||"Não informado")}</small>
-        ${a.produtos?`<small>Produtos: ${esc(a.produtos)}</small>`:""}
-        ${a.obs?`<small>Obs.: ${esc(a.obs)}</small>`:""}
-      </div>
-      <strong class="gold">${moeda(a.valor)}</strong>
-      <button class="btn small danger" onclick="excluirAtendimento('${a.id}')">Excluir</button>
-    </div>
-  `).join("")||'<div class="empty">Nenhum atendimento encontrado.</div>';
+ const busca=(document.getElementById("buscaHistorico")?.value||"").toLowerCase();
+ const lista=dados.atendimentos.slice().sort((a,b)=>b.data.localeCompare(a.data)).filter(a=>nomeCliente(a.clienteId).toLowerCase().includes(busca));
+ document.getElementById("listaHistorico").innerHTML=lista.map(a=>`
+ <div class="item"><div class="info"><strong>${esc(nomeCliente(a.clienteId))}</strong>
+ <small>${esc(a.data)} • ${esc(a.servicosTexto)}</small>
+ <small>Pagamento: ${esc(a.pagamento)}</small>
+ ${a.produtos?`<small>Produtos: ${esc(a.produtos)}</small>`:""}</div>
+ <strong class="gold">${moeda(a.valor)}</strong>
+ <button class="btn small danger" onclick="excluirAtendimento('${a.id}')">Excluir</button></div>
+ `).join("")||'<div class="empty">Nenhum atendimento encontrado.</div>';
 }
 
-/* ===== ESTATÍSTICAS POR CLIENTE ===== */
-function estatisticasCliente(clienteId){
-  const visitas=dados.atendimentos.filter(a=>a.clienteId===clienteId).sort((a,b)=>a.data.localeCompare(b.data));
-  const total=visitas.reduce((s,a)=>s+Number(a.valor||0),0);
-  const datas=[...new Set(visitas.map(a=>a.data))].sort();
-  let mediaDias=0;
-  if(datas.length>1){
-    let soma=0;
-    for(let i=1;i<datas.length;i++){
-      soma+=Math.round((new Date(datas[i]+"T12:00:00")-new Date(datas[i-1]+"T12:00:00"))/86400000);
-    }
-    mediaDias=Math.round(soma/(datas.length-1));
-  }
-  const ultimo=datas[datas.length-1]||"";
-  const diasSem=ultimo?diasDesde(ultimo):0;
-  return {visitas:visitas.length,total,mediaDias,ultimo,diasSem};
+/* RETORNOS */
+function estatisticasCliente(id){
+ const visitas=dados.atendimentos.filter(a=>a.clienteId===id).sort((a,b)=>a.data.localeCompare(b.data));
+ const datas=[...new Set(visitas.map(a=>a.data))];
+ let media=0;
+ if(datas.length>1){
+  let soma=0;
+  for(let i=1;i<datas.length;i++)soma+=(new Date(datas[i]+"T12:00:00")-new Date(datas[i-1]+"T12:00:00"))/86400000;
+  media=Math.round(soma/(datas.length-1));
+ }
+ const ultimo=datas[datas.length-1]||"";
+ const dias=ultimo?Math.floor((new Date(hoje()+"T12:00:00")-new Date(ultimo+"T12:00:00"))/86400000):0;
+ return {media,ultimo,dias};
 }
-
-/* ===== WHATSAPP E RETORNOS ===== */
 function whatsappRetorno(id){
-  const c=dados.clientes.find(x=>x.id===id);if(!c||!c.telefone)return;
-  const numero=c.telefone.replace(/\D/g,"");
-  const st=estatisticasCliente(id);
-  const mensagem=`Olá, ${c.nome}! Tudo bem? 😊✂️ Passando para saber como você está e lembrar que já está chegando a hora de dar aquele trato no visual. Será um prazer te receber novamente aqui na RH Barber! Quando quiser, é só me chamar. Abraço!`;
-  window.open("https://wa.me/55"+numero+"?text="+encodeURIComponent(mensagem),"_blank");
-}
-function diasDesde(data){
-  if(!data)return 9999;
-  const a=new Date(data+"T12:00:00"),b=new Date(hoje()+"T12:00:00");
-  return Math.floor((b-a)/86400000);
-}
-function ultimoAt(id){
-  return dados.atendimentos.filter(a=>a.clienteId===id).sort((a,b)=>b.data.localeCompare(a.data))[0];
+ const c=dados.clientes.find(x=>x.id===id);if(!c?.telefone)return;
+ const numero=c.telefone.replace(/\D/g,"");
+ const msg=`Olá, ${c.nome}! Tudo bem? 😊✂️ Já está chegando a hora de dar aquele trato no visual. Será um prazer te receber novamente aqui na RH Barber! Quando quiser, é só me chamar. Abraço!`;
+ window.open("https://wa.me/55"+numero+"?text="+encodeURIComponent(msg),"_blank");
 }
 function renderRetornos(){
-  const campo=document.getElementById("diasRetorno");
-  const base=Math.max(1,Number(campo?.value||30));
-  const lista=dados.clientes.map(c=>({c,st:estatisticasCliente(c.id)})).filter(x=>x.st.ultimo).map(x=>{
-    const prazo=x.st.mediaDias||base;
-    const gatilho=Math.max(1,Math.floor(prazo*0.8));
-    return {...x,prazo,gatilho,status:x.st.diasSem>=prazo?"Atrasado":x.st.diasSem>=gatilho?"Na hora de voltar":"Em breve"};
-  }).filter(x=>x.st.diasSem>=x.gatilho).sort((a,b)=>b.st.diasSem/b.prazo-a.st.diasSem/a.prazo);
-  document.getElementById("listaRetornos").innerHTML=lista.map(x=>`
-    <div class="item">
-      ${x.c.foto?`<img class="avatar" src="${x.c.foto}">`:`<div class="avatar">${iniciais(x.c.nome)}</div>`}
-      <div class="info">
-        <strong>${esc(x.c.nome)}</strong>
-        <small>Última visita: ${esc(x.st.ultimo)} • ${x.st.diasSem} dias sem vir</small>
-        <small>Média dele: ${x.st.mediaDias?x.st.mediaDias+" dias":"Ainda sem média — referência de "+x.prazo+" dias"}</small>
-        <span class="badge">${x.status}</span>
-      </div>
-      ${x.c.telefone?`<button class="btn small green" onclick="whatsappRetorno('${x.c.id}')">💬 WhatsApp</button>`:""}
-    </div>
-  `).join("")||'<div class="empty">Nenhum cliente chegou ao período de retorno por enquanto.</div>';
-  document.getElementById("inicioRetornos").innerHTML=lista.slice(0,5).map(x=>`
-    <div class="item"><div class="info"><strong>${esc(x.c.nome)}</strong><small>${x.st.diasSem} dias sem vir • média ${x.st.mediaDias?x.st.mediaDias+" dias":"em formação"}</small></div></div>
-  `).join("")||'<small class="muted">Nenhum cliente precisando voltar por enquanto.</small>';
+ const base=Math.max(1,Number(document.getElementById("diasRetorno")?.value||30));
+ const lista=dados.clientes.map(c=>({c,st:estatisticasCliente(c.id)})).filter(x=>x.st.ultimo).filter(x=>x.st.dias>=Math.floor((x.st.media||base)*.8)).sort((a,b)=>b.st.dias-a.st.dias);
+ const html=lista.map(x=>`
+ <div class="item">${x.c.foto?`<img class="avatar" src="${x.c.foto}">`:""}
+ <div class="info"><strong>${esc(x.c.nome)}</strong>
+ <small>Última visita: ${x.st.ultimo} • ${x.st.dias} dias sem vir</small>
+ <small>Média de retorno: ${x.st.media?x.st.media+" dias":"em formação"}</small></div>
+ ${x.c.telefone?`<button class="btn small green" onclick="whatsappRetorno('${x.c.id}')">WhatsApp</button>`:""}
+ </div>`).join("")||'<div class="empty">Nenhum cliente precisa voltar por enquanto.</div>';
+ document.getElementById("listaRetornos").innerHTML=html;
+ document.getElementById("inicioRetornos").innerHTML=lista.slice(0,4).map(x=>`<div class="item"><div class="info"><strong>${esc(x.c.nome)}</strong><small>${x.st.dias} dias sem vir</small></div></div>`).join("")||'<p class="muted">Nenhum retorno pendente.</p>';
 }
 
-/* ===== DASHBOARD ===== */
+/* DASHBOARD E BACKUP */
 function renderInicio(){
-  document.getElementById("totalClientes").innerText=dados.clientes.length;
-  document.getElementById("hojeQtd").innerText=dados.atendimentos.filter(a=>a.data===hoje()).length;
-  const ult=dados.atendimentos.slice().sort((a,b)=>b.data.localeCompare(a.data)).slice(0,5);
-  document.getElementById("ultimosAtendimentos").innerHTML=ult.map(a=>`
-    <div class="item">
-      <div class="info"><strong>${esc(clienteNome(a.clienteId))}</strong><small>${esc(a.data)} • ${esc(a.servicosTexto)}</small></div>
-      <strong class="gold">${moeda(a.valor)}</strong>
-    </div>
-  `).join("")||'<div class="empty">Nenhum atendimento registrado.</div>';
+ document.getElementById("totalClientes").innerText=dados.clientes.length;
+ document.getElementById("hojeQtd").innerText=dados.atendimentos.filter(a=>a.data===hoje()).length;
+ const ult=dados.atendimentos.slice().sort((a,b)=>b.data.localeCompare(a.data)).slice(0,5);
+ document.getElementById("ultimos").innerHTML=ult.map(a=>`<div class="item"><div class="info"><strong>${esc(nomeCliente(a.clienteId))}</strong><small>${a.data} • ${esc(a.servicosTexto)}</small></div><strong class="gold">${moeda(a.valor)}</strong></div>`).join("")||'<div class="empty">Nenhum atendimento registrado.</div>';
 }
-
-/* ===== ESTATÍSTICAS ===== */
-function renderEstatisticas(){
-  const campo=document.getElementById("statsMes");if(!campo)return;
-  if(!campo.value)campo.value=mesAtual();
-  const mes=campo.value;if(!mes)return;
-  const [ano,mn]=mes.split("-").map(Number);
-  const ini=mes+"-01";
-  const fim=new Date(ano,mn,1);
-  const fimStr=fim.getFullYear()+"-"+String(fim.getMonth()+1).padStart(2,"0")+"-01";
-  const antDate=new Date(ano,mn-2,1);
-  const mesAnt=antDate.getFullYear()+"-"+String(antDate.getMonth()+1).padStart(2,"0");
-  const ats=dados.atendimentos.filter(a=>a.data>=ini&&a.data<fimStr);
-  const des=dados.despesas.filter(d=>d.data>=ini&&d.data<fimStr);
-  const total=ats.reduce((s,a)=>s+Number(a.valor||0),0);
-  const despesas=des.reduce((s,d)=>s+Number(d.valor||0),0);
-  const lucro=total-despesas;
-  const ticket=ats.length?total/ats.length:0;
-  const atsAnt=dados.atendimentos.filter(a=>(a.data||"").startsWith(mesAnt));
-  const totalAnt=atsAnt.reduce((s,a)=>s+Number(a.valor||0),0);
-  const diff=total-totalAnt;
-  document.getElementById("stFaturamento").innerText=moeda(total);
-  document.getElementById("stLucro").innerText=moeda(lucro);
-  document.getElementById("stAtendimentos").innerText=ats.length;
-  document.getElementById("stTicket").innerText=moeda(ticket);
-  document.getElementById("stAnterior").innerText=moeda(totalAnt);
-  document.getElementById("stDiferenca").innerText=(diff>=0?"+":"-")+moeda(Math.abs(diff));
-  if(totalAnt>0){
-    const pct=diff/totalAnt*100;
-    document.getElementById("stComparacao").innerText=`${pct>=0?"📈":"📉"} ${Math.abs(pct).toFixed(1)}% ${pct>=0?"acima":"abaixo"} do mês anterior.`;
-  }else{
-    document.getElementById("stComparacao").innerText=total>0?"Este mês tem faturamento, mas não há receita no mês anterior para comparar.":"Ainda não há faturamento.";
-  }
-
-  const dias=new Date(ano,mn,0).getDate(),valores=Array(dias).fill(0);
-  ats.forEach(a=>{
-    const d=Number(a.data.slice(8,10));
-    if(d>=1&&d<=dias)valores[d-1]+=Number(a.valor||0);
-  });
-  const maxVal=Math.max(...valores,0);
-  const idx=maxVal>0?valores.indexOf(maxVal):-1;
-  document.getElementById("stMelhorDia").innerText=idx>=0?
-    `🏆 Melhor dia: ${String(idx+1).padStart(2,"0")}/${String(mn).padStart(2,"0")} — ${moeda(maxVal)}`:
-    "Nenhum atendimento neste mês.";
-  desenharGraficoDias(valores);
-
-  const semanas=[0,0,0,0,0];
-  ats.forEach(a=>{
-    const d=Number(a.data.slice(8,10));
-    semanas[Math.min(4,Math.floor((d-1)/7))]+=Number(a.valor||0);
-  });
-  document.getElementById("stSemanas").innerHTML=semanas.map((v,i)=>`
-    <div class="item">
-      <div class="info"><strong>Semana ${i+1}</strong><small>Dias ${i*7+1} a ${Math.min((i+1)*7,dias)}</small></div>
-      <strong class="gold">${moeda(v)}</strong>
-    </div>
-  `).join("");
-
-  const cont={};
-  ats.forEach(a=>(a.servicos||[]).forEach(s=>cont[s]=(cont[s]||0)+1));
-  const rank=Object.entries(cont).sort((a,b)=>b[1]-a[1]);
-  document.getElementById("stServicos").innerHTML=rank.map((s,i)=>`
-    <div class="item"><div class="info"><strong>${i+1}º ${esc(s[0])}</strong></div><span class="badge">${s[1]} vez(es)</span></div>
-  `).join("")||'<div class="empty">Nenhum serviço registrado.</div>';
-
-  const gastos={};
-  ats.forEach(a=>gastos[a.clienteId]=(gastos[a.clienteId]||0)+Number(a.valor||0));
-  const rankC=Object.entries(gastos).sort((a,b)=>b[1]-a[1]),maior=rankC[0];
-  document.getElementById("stCliente").innerHTML=maior?
-    `<div class="item"><div class="info"><strong>${esc(clienteNome(maior[0]))}</strong><small>Gasto neste mês</small></div><strong class="gold">${moeda(maior[1])}</strong></div>`:
-    '<div class="empty">Nenhum cliente atendido.</div>';
-
-  const pagamentos={};
-  ats.forEach(a=>{
-    const p=a.pagamento||"Não informado";
-    pagamentos[p]=(pagamentos[p]||0)+Number(a.valor||0);
-  });
-  document.getElementById("stPagamentos").innerHTML=Object.entries(pagamentos).sort((a,b)=>b[1]-a[1]).map(p=>`
-    <div class="item"><div class="info"><strong>${esc(p[0])}</strong></div><strong class="gold">${moeda(p[1])}</strong></div>
-  `).join("")||'<div class="empty">Nenhum pagamento registrado.</div>';
-
-  const novos=dados.clientes.filter(c=>(c.criado||"").startsWith(mes)).length;
-  const clientesAtendidos=new Set(ats.map(a=>a.clienteId)).size;
-  document.getElementById("stNovos").innerHTML=`
-    <div class="stats">
-      <div class="stat"><small>Clientes novos</small><strong>${novos}</strong></div>
-      <div class="stat"><small>Clientes atendidos</small><strong>${clientesAtendidos}</strong></div>
-    </div>`;
+function renderTudo(){
+ renderInicio();renderClientes();renderServicos();renderFin();renderHistorico();renderRetornos();prepararAtendimento();
 }
-function desenharGraficoDias(valores){
-  const canvas=document.getElementById("graficoDias");if(!canvas)return;
-  const w=Math.max(280,canvas.parentElement.clientWidth-30),h=250;
-  canvas.width=w;canvas.height=h;
-  const ctx=canvas.getContext("2d");ctx.clearRect(0,0,w,h);
-  const pad={top:15,bottom:35,left:8,right:8};
-  const areaW=w-pad.left-pad.right,areaH=h-pad.top-pad.bottom;
-  const max=Math.max(...valores,1);
-  const gap=Math.max(1,Math.min(4,areaW/valores.length*.15));
-  const bw=(areaW-gap*(valores.length-1))/valores.length;
-  valores.forEach((v,i)=>{
-    const bh=v/max*areaH,x=pad.left+i*(bw+gap),y=pad.top+areaH-bh;
-    ctx.fillStyle="#d5a644";ctx.fillRect(x,y,bw,bh);
-    if(valores.length<=15||i%5===0||i===valores.length-1){
-      ctx.fillStyle="#aaa";ctx.font="10px Arial";ctx.textAlign="center";
-      ctx.fillText(String(i+1),x+bw/2,h-12);
-    }
-  });
-}
-
-/* ===== BACKUP ===== */
 function exportarBackup(){
-  const blob=new Blob([JSON.stringify({
-    app:"RH Barber Assistente",versao:3,
-    exportadoEm:new Date().toISOString(),dados
-  },null,2)],{type:"application/json"});
-  const url=URL.createObjectURL(blob),a=document.createElement("a");
-  a.href=url;a.download="rh-barber-backup-"+hoje()+".json";a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
+ const blob=new Blob([JSON.stringify({app:"RH Barber Assistente",dados},null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="rh-barber-backup-"+hoje()+".json";a.click();URL.revokeObjectURL(url);
 }
 function importarBackup(){
-  const f=document.getElementById("arquivoBackup").files[0];
-  if(!f)return alert("Selecione o arquivo.");
-  const r=new FileReader();
-  r.onload=()=>{
-    try{
-      const obj=JSON.parse(r.result);
-      if(!obj.dados||!Array.isArray(obj.dados.clientes)||
-        !Array.isArray(obj.dados.atendimentos)||
-        !Array.isArray(obj.dados.servicos)||
-        !Array.isArray(obj.dados.despesas))throw Error();
-      if(!confirm("Restaurar backup? Isso substituirá os dados atuais."))return;
-      dados=obj.dados;salvarDados();renderTudo();alert("Backup restaurado!");
-    }catch(e){alert("Arquivo de backup inválido.");}
-  };
-  r.readAsText(f);
-}
-function limparTudo(){
-  if(!confirm("Apagar todos os clientes, serviços, atendimentos e despesas?"))return;
-  if(!confirm("Confirmação final: os dados apagados não poderão ser recuperados sem backup."))return;
-  localStorage.removeItem(KEY);
-  dados={clientes:[],servicos:[],atendimentos:[],despesas:[]};
-  carregarDados();renderTudo();alert("Dados apagados.");
+ const f=document.getElementById("arquivoBackup").files[0];if(!f)return alert("Escolha o arquivo.");
+ const r=new FileReader();
+ r.onload=async()=>{
+  try{
+   const obj=JSON.parse(r.result);
+   if(!obj.dados||!Array.isArray(obj.dados.clientes)||!Array.isArray(obj.dados.servicos)||!Array.isArray(obj.dados.atendimentos)||!Array.isArray(obj.dados.despesas))throw Error();
+   if(!confirm("Restaurar este backup e substituir os dados da sua conta?"))return;
+   dados=obj.dados;
+   // Gera identificadores UUID para registros de backups antigos.
+   const mapa={};
+   dados.clientes.forEach(c=>{const antigo=c.id;c.id=idNovo();mapa[antigo]=c.id});
+   dados.servicos.forEach(s=>s.id=idNovo());
+   dados.atendimentos.forEach(a=>{a.id=idNovo();a.clienteId=mapa[a.clienteId]||a.clienteId});
+   dados.despesas.forEach(d=>d.id=idNovo());
+   await salvarDados();renderTudo();alert("Backup restaurado!");
+  }catch(e){alert("Não foi possível ler esse backup.");}
+ };
+ r.readAsText(f);
 }
 
-/* ===== RENDERIZAÇÃO GERAL ===== */
-function renderTudo(){
-  renderInicio();
-  renderClientes();
-  renderServicos();
-  renderFin();
-  renderHistorico();
-  renderRetornos();
-  prepararAtendimento();
-  renderEstatisticas();
-}
-
-/* ===== INICIALIZAÇÃO ===== */
-carregarDados();
-document.getElementById("despData").value=hoje();
-document.getElementById("atData").value=hoje();
-renderTudo();
-</script>
-
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(error => {
-      console.error("Falha ao registrar o service worker:", error);
-    });
-  });
+/* INICIALIZAÇÃO */
+(async()=>{
+ const {data:{session}}=await sb.auth.getSession();
+ if(session)await iniciarAplicativo();
+ else document.getElementById("login").style.display="block";
+ sb.auth.onAuthStateChange((event,session)=>{
+  if(event==="SIGNED_OUT"){
+   usuario=null;document.getElementById("app").style.display="none";
+   document.getElementById("login").style.display="block";
+  }
+ });
+})();
+if("serviceWorker" in navigator){
+ window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.error));
 }
 </script>
 </body>
