@@ -2,69 +2,353 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RH Barber Assistente</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#101114;color:#f5f5f5;font-family:Arial,sans-serif}
-header{padding:24px;background:#19171c;border-bottom:1px solid #333}
-h1{margin:0;color:#d6ad60;font-size:24px}
-header p{color:#aaa;margin-bottom:0}
-main{padding:18px;max-width:650px;margin:auto}
-.card{background:#1d1b21;border:1px solid #333;border-radius:14px;padding:18px;margin-bottom:15px}
-.label{color:#aaa;font-size:13px}
-.value{font-size:27px;font-weight:bold;margin-top:8px}
-button{background:#d6ad60;color:#171717;border:0;border-radius:10px;padding:13px;font-weight:bold;width:100%;margin-top:8px}
-input{width:100%;padding:13px;margin:8px 0;background:#29262d;border:1px solid #444;color:white;border-radius:8px}
-.client{padding:12px;border-bottom:1px solid #333}
-small{color:#aaa}
+body{margin:0;background:#111114;color:#f5f5f5;font-family:Arial,sans-serif}
+header{padding:22px 18px;background:#19171c;border-bottom:1px solid #35323a}
+header h1{margin:0;color:#d6ad60;font-size:23px}
+header p{color:#aaa;margin:8px 0 0}
+nav{display:flex;gap:7px;overflow:auto;padding:10px;background:#19171c;position:sticky;top:0}
+nav button{width:auto;white-space:nowrap;background:#302d35;color:white;margin:0}
+nav button.active{background:#d6ad60;color:#171717}
+main{max-width:700px;margin:auto;padding:15px 15px 90px}
+.section{display:none}
+.section.active{display:block}
+.card{background:#1d1b21;border:1px solid #35323a;border-radius:14px;padding:16px;margin:12px 0}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:#1d1b21;border:1px solid #35323a;border-radius:12px;padding:14px}
+.label{font-size:12px;color:#aaa}
+.value{font-size:22px;font-weight:bold;color:#d6ad60;margin-top:7px}
+h2{font-size:20px}
+h3{margin-top:5px}
+input,select,textarea{width:100%;padding:12px;margin:6px 0;background:#29262d;border:1px solid #45414b;color:white;border-radius:8px;font-size:15px}
+label{display:block;color:#aaa;font-size:13px;margin-top:8px}
+textarea{min-height:70px}
+button{background:#d6ad60;color:#171717;border:0;border-radius:9px;padding:12px;font-weight:bold;width:100%;margin-top:8px}
+button.secondary{background:#302d35;color:white}
+button.danger{background:#783b3b;color:white}
+.item{padding:12px 0;border-bottom:1px solid #35323a}
+.item small{color:#aaa}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.empty{color:#aaa}
+.avatar{width:52px;height:52px;border-radius:50%;object-fit:cover;background:#333;float:left;margin-right:12px}
+.hidden{display:none}
 </style>
 </head>
 <body>
 <header>
 <h1>RH Barber Assistente 💈</h1>
-<p>Seu assistente inteligente de barbearia</p>
+<p>Seu parceiro na gestão da barbearia</p>
 </header>
+
+<nav>
+<button class="active" onclick="abrir('inicio',this)">🏠 Início</button>
+<button onclick="abrir('clientes',this)">👥 Clientes</button>
+<button onclick="abrir('agenda',this)">📅 Agenda</button>
+<button onclick="abrir('servicos',this)">✂️ Serviços</button>
+<button onclick="abrir('financeiro',this)">💰 Financeiro</button>
+<button onclick="abrir('historico',this)">📋 Histórico</button>
+</nav>
+
 <main>
-<div class="card">
-<div class="label">CLIENTES CADASTRADOS</div>
-<div class="value" id="total">0</div>
+<section id="inicio" class="section active">
+<h2>Visão geral</h2>
+<div class="stats">
+<div class="stat"><div class="label">CLIENTES</div><div class="value" id="totalClientes">0</div></div>
+<div class="stat"><div class="label">AGENDA HOJE</div><div class="value" id="totalHoje">0</div></div>
+<div class="stat"><div class="label">ENTRADAS DO MÊS</div><div class="value" id="totalEntradas">R$ 0</div></div>
+<div class="stat"><div class="label">DESPESAS DO MÊS</div><div class="value" id="totalDespesas">R$ 0</div></div>
 </div>
+<div class="card"><h3>📅 Próximos horários</h3><div id="resumoAgenda"></div></div>
+<div class="card"><h3>🔔 Clientes para reativar</h3><div id="alertas"></div></div>
+</section>
 
+<section id="clientes" class="section">
+<h2>👥 Clientes</h2>
 <div class="card">
-<h3>👤 Cadastrar cliente</h3>
-<input id="nome" placeholder="Nome do cliente">
-<input id="telefone" placeholder="Telefone / WhatsApp">
-<button onclick="cadastrar()">+ Cadastrar cliente</button>
+<h3>Cadastrar cliente</h3>
+<label>Nome</label><input id="clienteNome" placeholder="Nome completo">
+<label>WhatsApp</label><input id="clienteTel" placeholder="Telefone com DDD">
+<label>Foto (opcional)</label><input id="clienteFoto" type="file" accept="image/*">
+<label>Observações</label><textarea id="clienteObs" placeholder="Preferências, tipo de corte..."></textarea>
+<button onclick="salvarCliente()">Salvar cliente</button>
 </div>
-
 <div class="card">
-<h3>📋 Minha carteira de clientes</h3>
-<div id="lista"></div>
+<label>Buscar cliente</label><input id="buscar" placeholder="Nome ou telefone" oninput="renderClientes()">
+<div id="listaClientes"></div>
 </div>
-</main>
+</section>
 
+<section id="agenda" class="section">
+<h2>📅 Agenda</h2>
+<div class="card">
+<h3>Novo agendamento</h3>
+<label>Cliente</label><select id="agCliente"></select>
+<label>Serviço</label><select id="agServico"></select>
+<div class="row">
+<div><label>Data</label><input id="agData" type="date"></div>
+<div><label>Horário</label><input id="agHora" type="time"></div>
+</div>
+<button onclick="salvarAgendamento()">Agendar</button>
+</div>
+<div class="card"><h3>Agendamentos</h3><div id="listaAgenda"></div></div>
+</section>
+
+<section id="servicos" class="section">
+<h2>✂️ Serviços e preços</h2>
+<div class="card">
+<label>Nome do serviço</label><input id="servNome" placeholder="Ex.: Corte">
+<label>Preço (R$)</label><input id="servPreco" type="number" step="0.01">
+<button onclick="salvarServico()">Adicionar serviço</button>
+</div>
+<div class="card"><h3>Meus serviços</h3><div id="listaServicos"></div></div>
+</section>
+
+<section id="financeiro" class="section">
+<h2>💰 Financeiro</h2>
+<div class="card">
+<label>Tipo de movimentação</label><select id="finTipo"><option value="entrada">Entrada</option><option value="despesa">Despesa</option></select>
+<label>Descrição</label><input id="finDesc" placeholder="Descrição">
+<label>Valor (R$)</label><input id="finValor" type="number" step="0.01">
+<label>Data</label><input id="finData" type="date">
+<button onclick="salvarFin()">Registrar</button>
+</div>
+<div class="card"><h3>Movimentações</h3><div id="listaFin"></div></div>
+</section></main>
 <script>
-let clientes=JSON.parse(localStorage.getItem("rh_clientes")||"[]");
+const ler=(chave,base=[])=>JSON.parse(localStorage.getItem(chave)||JSON.stringify(base));
+let clientes=ler("rh_clientes");
+let agenda=ler("rh_agenda");
+let servicos=ler("rh_servicos",[
+{id:1,nome:"Corte",preco:30},
+{id:2,nome:"Barba",preco:20},
+{id:3,nome:"Corte + Barba",preco:45}
+]);
+let financeiro=ler("rh_financeiro");
+let historico=ler("rh_historico");
 
-function atualizar(){
-document.getElementById("total").innerText=clientes.length;
-document.getElementById("lista").innerHTML=clientes.length
-? clientes.map(c=>`<div class="client"><b>${c.nome}</b><br><small>${c.telefone||"Sem telefone"}</small></div>`).join("")
-: "<small>Nenhum cliente cadastrado ainda.</small>";
+function salvarDados(chave,valor){
+localStorage.setItem(chave,JSON.stringify(valor));
+}
+function moeda(v){
+return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+}
+function hoje(){
+return new Date().toISOString().slice(0,10);
+}
+function escapar(s){
+return String(s||"").replace(/[&<>"']/g,m=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[m]));
+}
+function abrir(id,botao){
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+botao.classList.add("active");
+renderTudo();
+}
+document.getElementById("agData").value=hoje();
+document.getElementById("finData").value=hoje();
+
+function salvarCliente(){
+let nome=document.getElementById("clienteNome").value.trim();
+let tel=document.getElementById("clienteTel").value.trim();
+let obs=document.getElementById("clienteObs").value.trim();
+let arquivo=document.getElementById("clienteFoto").files[0];
+if(!nome){alert("Digite o nome do cliente.");return;}
+function concluir(foto){
+clientes.push({id:Date.now(),nome,tel,obs,foto,criado:hoje(),ultimaVisita:""});
+salvarDados("rh_clientes",clientes);
+document.getElementById("clienteNome").value="";
+document.getElementById("clienteTel").value="";
+document.getElementById("clienteObs").value="";
+document.getElementById("clienteFoto").value="";
+renderTudo();
+alert("Cliente cadastrado!");
+}
+if(arquivo){
+let reader=new FileReader();
+reader.onload=e=>concluir(e.target.result);
+reader.readAsDataURL(arquivo);
+}else concluir("");
 }
 
-function cadastrar(){
-let nome=document.getElementById("nome").value.trim();
-let telefone=document.getElementById("telefone").value.trim();
-if(!nome){alert("Digite o nome do cliente!");return;}
-clientes.push({nome,telefone});
-localStorage.setItem("rh_clientes",JSON.stringify(clientes));
-document.getElementById("nome").value="";
-document.getElementById("telefone").value="";
-atualizar();
+function renderClientes(){
+let termo=(document.getElementById("buscar").value||"").toLowerCase();
+let filtrados=clientes.filter(c=>(c.nome+" "+(c.tel||"")).toLowerCase().includes(termo));
+let el=document.getElementById("listaClientes");
+el.innerHTML=filtrados.length?filtrados.map(c=>`
+<div class="item">
+${c.foto?`<img class="avatar" src="${c.foto}">`:`<div class="avatar">👤</div>`}
+<div><b>${escapar(c.nome)}</b><br><small>${escapar(c.tel||"Sem telefone")}</small><br><small>${escapar(c.obs||"")}</small></div>
+<button class="secondary" onclick="whats('${escapar(c.tel||"")}')">WhatsApp</button>
+<button class="danger" onclick="removerCliente(${c.id})">Excluir</button>
+</div>`).join(""):"<p class='empty'>Nenhum cliente encontrado.</p>";
+document.getElementById("agCliente").innerHTML=clientes.map(c=>`<option value="${c.id}">${escapar(c.nome)}</option>`).join("");
 }
-atualizar();
+function removerCliente(id){
+if(!confirm("Excluir este cliente?"))return;
+clientes=clientes.filter(c=>c.id!==id);
+salvarDados("rh_clientes",clientes);
+renderTudo();
+}
+function whats(tel){
+let numero=(tel||"").replace(/\D/g,"");
+if(!numero){alert("Cliente sem telefone cadastrado.");return;}
+if(!numero.startsWith("55"))numero="55"+numero;
+window.open("https://wa.me/"+numero,"_blank");
+}
+
+function salvarServico(){
+let nome=document.getElementById("servNome").value.trim();
+let preco=Number(document.getElementById("servPreco").value);
+if(!nome||preco<0){alert("Informe o nome e o preço.");return;}
+servicos.push({id:Date.now(),nome,preco});
+salvarDados("rh_servicos",servicos);
+document.getElementById("servNome").value="";
+document.getElementById("servPreco").value="";
+renderTudo();
+}
+function renderServicos(){
+document.getElementById("listaServicos").innerHTML=servicos.length?servicos.map(s=>`
+<div class="item"><b>${escapar(s.nome)}</b> — ${moeda(s.preco)}
+<button class="danger" onclick="removerServico(${s.id})">Excluir</button></div>`).join(""):"<p class='empty'>Nenhum serviço cadastrado.</p>";
+document.getElementById("agServico").innerHTML=servicos.map(s=>`<option value="${s.id}">${escapar(s.nome)} - ${moeda(s.preco)}</option>`).join("");
+}
+function removerServico(id){
+if(!confirm("Excluir serviço?"))return;
+servicos=servicos.filter(s=>s.id!==id);
+salvarDados("rh_servicos",servicos);
+renderTudo();
+}
+
+function salvarAgendamento(){
+let clienteId=Number(document.getElementById("agCliente").value);
+let servicoId=Number(document.getElementById("agServico").value);
+let data=document.getElementById("agData").value;
+let hora=document.getElementById("agHora").value;
+if(!clienteId||!servicoId||!data||!hora){alert("Preencha cliente, serviço, data e horário.");return;}
+let c=clientes.find(x=>x.id===clienteId);
+let s=servicos.find(x=>x.id===servicoId);
+if(!c||!s){alert("Cadastre um cliente e serviço primeiro.");return;}
+agenda.push({id:Date.now(),clienteId,cliente:c.nome,servico:s.nome,valor:s.preco,data,hora,status:"Agendado"});
+salvarDados("rh_agenda",agenda);
+document.getElementById("agHora").value="";
+renderTudo();
+alert("Agendamento salvo!");
+}
+function concluirAgendamento(id){
+let a=agenda.find(x=>x.id===id);
+if(!a)return;
+if(!confirm("Concluir atendimento e registrar no financeiro?"))return;
+a.status="Concluído";
+historico.push({...a,concluido:hoje()});
+financeiro.push({id:Date.now(),tipo:"entrada",descricao:"Atendimento: "+a.cliente+" - "+a.servico,valor:a.valor,data:hoje()});
+let c=clientes.find(x=>x.id===a.clienteId);
+if(c)c.ultimaVisita=hoje();
+salvarDados("rh_agenda",agenda);
+salvarDados("rh_historico",historico);
+salvarDados("rh_financeiro",financeiro);
+salvarDados("rh_clientes",clientes);
+renderTudo();
+}
+function excluirAgendamento(id){
+if(!confirm("Excluir este agendamento?"))return;
+agenda=agenda.filter(a=>a.id!==id);
+salvarDados("rh_agenda",agenda);
+renderTudo();
+}function salvarFin(){
+let tipo=document.getElementById("finTipo").value;
+let desc=document.getElementById("finDesc").value.trim();
+let valor=Number(document.getElementById("finValor").value);
+let data=document.getElementById("finData").value;
+if(!desc||valor<=0||!data){alert("Preencha descrição, valor e data.");return;}
+financeiro.push({id:Date.now(),tipo,descricao:desc,valor,data});
+salvarDados("rh_financeiro",financeiro);
+document.getElementById("finDesc").value="";
+document.getElementById("finValor").value="";
+renderTudo();
+alert("Movimentação registrada!");
+}
+function removerFin(id){
+if(!confirm("Excluir movimentação?"))return;
+financeiro=financeiro.filter(f=>f.id!==id);
+salvarDados("rh_financeiro",financeiro);
+renderTudo();
+}
+
+function renderAgenda(){
+let ordenada=[...agenda].sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));
+document.getElementById("listaAgenda").innerHTML=ordenada.length?ordenada.map(a=>`
+<div class="item">
+<b>${escapar(a.cliente)}</b><br>
+<small>${escapar(a.servico)} — ${moeda(a.valor)}</small><br>
+<small>${a.data} às ${a.hora}</small><br>
+<span class="badge">${escapar(a.status)}</span>
+${a.status==="Agendado"?`<button onclick="concluirAgendamento(${a.id})">Concluir atendimento</button>`:""}
+<button class="danger" onclick="excluirAgendamento(${a.id})">Excluir</button>
+</div>`).join(""):"<p class='empty'>Nenhum agendamento ainda.</p>";
+let hojeAgenda=ordenada.filter(a=>a.data===hoje()&&a.status==="Agendado");
+document.getElementById("resumoAgenda").innerHTML=hojeAgenda.length?hojeAgenda.map(a=>`<div class="item"><b>${a.hora} — ${escapar(a.cliente)}</b><br><small>${escapar(a.servico)}</small></div>`).join(""):"<p class='empty'>Nenhum atendimento agendado para hoje.</p>";
+document.getElementById("totalHoje").innerText=hojeAgenda.length;
+}
+
+function renderFin(){
+let mes=hoje().slice(0,7);
+let entradas=financeiro.filter(f=>f.tipo==="entrada"&&f.data.startsWith(mes)).reduce((t,f)=>t+Number(f.valor),0);
+let saidas=financeiro.filter(f=>f.tipo==="despesa"&&f.data.startsWith(mes)).reduce((t,f)=>t+Number(f.valor),0);
+document.getElementById("totalEntradas").innerText=moeda(entradas);
+document.getElementById("totalDespesas").innerText=moeda(saidas);
+document.getElementById("listaFin").innerHTML=financeiro.length?[...financeiro].reverse().map(f=>`
+<div class="item">
+<b>${escapar(f.descricao)}</b><br>
+<small>${f.data} • ${f.tipo==="entrada"?"Entrada":"Despesa"}</small><br>
+<strong>${moeda(f.valor)}</strong>
+<button class="danger" onclick="removerFin(${f.id})">Excluir</button>
+</div>`).join(""):"<p class='empty'>Nenhuma movimentação registrada.</p>";
+}
+
+function renderHist(){
+document.getElementById("listaHist").innerHTML=historico.length?[...historico].reverse().map(h=>`
+<div class="item">
+<b>${escapar(h.cliente)}</b><br>
+<small>${escapar(h.servico)} • ${h.concluido||h.data}</small><br>
+<strong>${moeda(h.valor)}</strong>
+</div>`).join(""):"<p class='empty'>Nenhum atendimento concluído ainda.</p>";
+}
+
+function renderAlertas(){
+let agora=new Date();
+let atrasados=clientes.filter(c=>{
+if(!c.ultimaVisita)return false;
+let dias=(agora-new Date(c.ultimaVisita+"T12:00:00"))/(1000*60*60*24);
+return dias>=30;
+});
+document.getElementById("alertas").innerHTML=atrasados.length?atrasados.map(c=>{
+let dias=Math.floor((agora-new Date(c.ultimaVisita+"T12:00:00"))/(1000*60*60*24));
+return `<div class="item"><b>${escapar(c.nome)}</b><br><small>Há ${dias} dias sem visitar</small><button onclick="whats('${escapar(c.tel||"")}')">Chamar no WhatsApp</button></div>`;
+}).join(""):"<p class='empty'>Os clientes com 30 dias ou mais sem visita aparecerão aqui. As visitas começam a ser contadas quando os atendimentos forem concluídos pelo aplicativo.</p>";
+}
+
+function renderTudo(){
+document.getElementById("totalClientes").innerText=clientes.length;
+renderClientes();
+renderServicos();
+renderAgenda();
+renderFin();
+renderHist();
+renderAlertas();
+}
+renderTudo();
 </script>
 </body>
 </html>
+
+<section id="historico" class="section">
+<h2>📋 Histórico de atendimentos</h2>
+<div class="card"><div id="listaHist"></div></div>
+</section>
