@@ -1,354 +1,522 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RH Barber Assistente</title>
 <style>
+:root{
+  --bg:#101010;--panel:#191919;--panel2:#222;
+  --gold:#d6a84b;--gold2:#f0cb78;
+  --text:#f5f5f5;--muted:#aaa;--red:#e05252;--green:#56c58b;
+}
 *{box-sizing:border-box}
-body{margin:0;background:#111114;color:#f5f5f5;font-family:Arial,sans-serif}
-header{padding:22px 18px;background:#19171c;border-bottom:1px solid #35323a}
-header h1{margin:0;color:#d6ad60;font-size:23px}
-header p{color:#aaa;margin:8px 0 0}
-nav{display:flex;gap:7px;overflow:auto;padding:10px;background:#19171c;position:sticky;top:0}
-nav button{width:auto;white-space:nowrap;background:#302d35;color:white;margin:0}
-nav button.active{background:#d6ad60;color:#171717}
-main{max-width:700px;margin:auto;padding:15px 15px 90px}
-.section{display:none}
-.section.active{display:block}
-.card{background:#1d1b21;border:1px solid #35323a;border-radius:14px;padding:16px;margin:12px 0}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.stat{background:#1d1b21;border:1px solid #35323a;border-radius:12px;padding:14px}
-.label{font-size:12px;color:#aaa}
-.value{font-size:22px;font-weight:bold;color:#d6ad60;margin-top:7px}
-h2{font-size:20px}
-h3{margin-top:5px}
-input,select,textarea{width:100%;padding:12px;margin:6px 0;background:#29262d;border:1px solid #45414b;color:white;border-radius:8px;font-size:15px}
-label{display:block;color:#aaa;font-size:13px;margin-top:8px}
-textarea{min-height:70px}
-button{background:#d6ad60;color:#171717;border:0;border-radius:9px;padding:12px;font-weight:bold;width:100%;margin-top:8px}
-button.secondary{background:#302d35;color:white}
-button.danger{background:#783b3b;color:white}
-.item{padding:12px 0;border-bottom:1px solid #35323a}
-.item small{color:#aaa}
-.row{display:flex;gap:8px}
-.row>*{flex:1}
-.empty{color:#aaa}
-.avatar{width:52px;height:52px;border-radius:50%;object-fit:cover;background:#333;float:left;margin-right:12px}
-.hidden{display:none}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+header{padding:20px;background:#151515;border-bottom:1px solid #333}
+.brand{font-size:23px;font-weight:bold;color:var(--gold)}
+.brand span{color:white}
+header small{display:block;color:var(--muted);margin-top:5px}
+nav{display:flex;gap:8px;padding:12px;overflow-x:auto;background:#141414;position:sticky;top:0;z-index:10}
+nav button{white-space:nowrap;border:1px solid #333;background:#222;color:#eee;padding:11px 14px;border-radius:9px}
+nav button.active{background:var(--gold);color:#111;border-color:var(--gold);font-weight:bold}
+main{padding:14px;max-width:1100px;margin:auto}
+section{display:none}
+section.active{display:block}
+h2{margin:8px 0 15px}
+h3{margin:0 0 12px}
+.card{background:var(--panel);border:1px solid #303030;border-radius:13px;padding:15px;margin-bottom:13px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{background:var(--panel);border:1px solid #303030;border-radius:12px;padding:15px}
+.stat small{color:var(--muted);display:block;margin-bottom:7px}
+.stat strong{font-size:22px;color:var(--gold)}
+input,select,textarea{width:100%;padding:12px;background:#242424;color:white;border:1px solid #444;border-radius:9px;margin:5px 0 12px;font-size:16px}
+input[type="checkbox"]{width:auto;margin:0}
+label{font-size:13px;color:#ccc}
+button{cursor:pointer}
+.btn{padding:12px;border:0;border-radius:9px;background:var(--gold);color:#111;font-weight:bold;margin:3px 0}
+.btn.secondary{background:#303030;color:#fff}
+.btn.danger{background:#572727;color:#fff}
+.btn.green{background:#176b49;color:white}
+.btn.small{padding:8px 10px;font-size:13px}
+.row{display:flex;gap:8px;align-items:center}
+.row>*{flex:1;min-width:0}
+.item{display:flex;align-items:center;gap:10px;background:#222;border-radius:10px;padding:12px;margin:8px 0}
+.item .info{flex:1;min-width:0}
+.item .info strong{display:block;overflow-wrap:anywhere}
+.item .info small{color:var(--muted);display:block;margin-top:4px}
+.avatar{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#444;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.badge{font-size:11px;padding:5px 8px;border-radius:20px;background:#333;color:#ddd}
+.gold{color:var(--gold)}
+.muted{color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:25px}
+hr{border:0;border-top:1px solid #333;margin:15px 0}
+.actions{display:flex;flex-wrap:wrap;gap:6px}
+.actions button{flex:1}
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.check{display:flex;align-items:center;gap:8px;background:#252525;padding:10px;border-radius:8px}
+.check span{flex:1}
+#fotoPreview{width:85px;height:85px;border-radius:50%;object-fit:cover;display:none;margin:8px 0}
+#modal{display:none;position:fixed;inset:0;background:#000b;z-index:99;overflow:auto;padding:15px}
+#modalContent{max-width:650px;margin:30px auto;background:#191919;border:1px solid #444;border-radius:14px;padding:18px}
+footer{text-align:center;color:#666;padding:25px;font-size:12px}
+@media(min-width:700px){.stats{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
 <body>
 <header>
-<h1>RH Barber Assistente 💈</h1>
-<p>Seu parceiro na gestão da barbearia</p>
+  <div class="brand">RH <span>BARBER</span> ASSISTENTE</div>
+  <small>Controle inteligente da sua barbearia</small>
 </header>
 
-<nav>
+<nav id="menu">
 <button class="active" onclick="abrir('inicio',this)">🏠 Início</button>
 <button onclick="abrir('clientes',this)">👥 Clientes</button>
-<button onclick="abrir('agenda',this)">📅 Agenda</button>
-<button onclick="abrir('servicos',this)">✂️ Serviços</button>
+<button onclick="abrir('atendimento',this)">✂️ Atendimento</button>
+<button onclick="abrir('servicos',this)">💈 Serviços</button>
 <button onclick="abrir('financeiro',this)">💰 Financeiro</button>
 <button onclick="abrir('historico',this)">📋 Histórico</button>
+<button onclick="abrir('retornos',this)">🔔 Retornos</button>
+<button onclick="abrir('backup',this)">💾 Backup</button>
 </nav>
 
 <main>
-<section id="inicio" class="section active">
+<!-- INICIO -->
+<section id="inicio" class="active">
 <h2>Visão geral</h2>
 <div class="stats">
-<div class="stat"><div class="label">CLIENTES</div><div class="value" id="totalClientes">0</div></div>
-<div class="stat"><div class="label">AGENDA HOJE</div><div class="value" id="totalHoje">0</div></div>
-<div class="stat"><div class="label">ENTRADAS DO MÊS</div><div class="value" id="totalEntradas">R$ 0</div></div>
-<div class="stat"><div class="label">DESPESAS DO MÊS</div><div class="value" id="totalDespesas">R$ 0</div></div>
+<div class="stat"><small>Faturamento hoje</small><strong id="hojeValor">R$ 0,00</strong></div>
+<div class="stat"><small>Faturamento do mês</small><strong id="mesValor">R$ 0,00</strong></div>
+<div class="stat"><small>Atendimentos hoje</small><strong id="hojeQtd">0</strong></div>
+<div class="stat"><small>Total de clientes</small><strong id="totalClientes">0</strong></div>
 </div>
-<div class="card"><h3>📅 Próximos horários</h3><div id="resumoAgenda"></div></div>
-<div class="card"><h3>🔔 Clientes para reativar</h3><div id="alertas"></div></div>
+<div class="stats" style="margin-top:10px">
+<div class="stat"><small>Despesas do mês</small><strong id="mesDespesas">R$ 0,00</strong></div>
+<div class="stat"><small>Saldo do mês</small><strong id="mesSaldo">R$ 0,00</strong></div>
+</div>
+<div class="card">
+<h3>⚡ Ações rápidas</h3>
+<div class="actions">
+<button class="btn" onclick="abrir('atendimento')">+ Registrar atendimento</button>
+<button class="btn secondary" onclick="abrir('clientes')">+ Novo cliente</button>
+<button class="btn secondary" onclick="abrir('financeiro')">+ Registrar despesa</button>
+</div>
+</div>
+<div class="card">
+<h3>Últimos atendimentos</h3>
+<div id="ultimosAtendimentos"></div>
+</div>
+<div class="card">
+<h3>Clientes que podem estar precisando voltar</h3>
+<div id="inicioRetornos"></div>
+</div>
 </section>
 
-<section id="clientes" class="section">
-<h2>👥 Clientes</h2>
+<!-- CLIENTES -->
+<section id="clientes">
+<h2>Clientes</h2>
 <div class="card">
 <h3>Cadastrar cliente</h3>
-<label>Nome</label><input id="clienteNome" placeholder="Nome completo">
-<label>WhatsApp</label><input id="clienteTel" placeholder="Telefone com DDD">
-<label>Foto (opcional)</label><input id="clienteFoto" type="file" accept="image/*">
-<label>Observações</label><textarea id="clienteObs" placeholder="Preferências, tipo de corte..."></textarea>
-<button onclick="salvarCliente()">Salvar cliente</button>
+<input id="clienteNome" placeholder="Nome completo">
+<input id="clienteTelefone" placeholder="Telefone / WhatsApp" type="tel">
+<label>Foto do cliente (escolha manualmente)</label>
+<input id="clienteFoto" type="file" accept="image/*" onchange="previewFoto(event)">
+<img id="fotoPreview">
+<textarea id="clienteObs" placeholder="Observações sobre o cliente"></textarea>
+<button class="btn" onclick="salvarCliente()">Salvar cliente</button>
 </div>
-<div class="card">
-<label>Buscar cliente</label><input id="buscar" placeholder="Nome ou telefone" oninput="renderClientes()">
+<input id="buscaCliente" placeholder="🔎 Buscar por nome ou telefone..." oninput="renderClientes()">
 <div id="listaClientes"></div>
+</section>
+
+<!-- REGISTRO ATENDIMENTO -->
+<section id="atendimento">
+<h2>Registrar atendimento</h2>
+<div class="card">
+<label>Cliente</label>
+<select id="atCliente"></select>
+<button class="btn secondary small" onclick="abrir('clientes')">+ Cadastrar novo cliente</button>
+<hr>
+<h3>Serviços realizados</h3>
+<div id="checkServicos" class="checklist"></div>
+<label>Valor adicional (opcional)</label>
+<input id="atAdicional" type="number" min="0" step="0.01" placeholder="0,00" oninput="calcularAtendimento()">
+<label>Desconto (opcional)</label>
+<input id="atDesconto" type="number" min="0" step="0.01" placeholder="0,00" oninput="calcularAtendimento()">
+<label>Valor total cobrado</label>
+<input id="atValor" type="number" min="0" step="0.01" placeholder="Valor calculado automaticamente" oninput="valorManual=true">
+<div id="atResumo" class="muted"></div>
+<label>Forma de pagamento</label>
+<select id="atPagamento">
+<option>Pix</option><option>Dinheiro</option><option>Cartão de débito</option><option>Cartão de crédito</option><option>Outro</option>
+</select>
+<label>Data do atendimento</label>
+<input id="atData" type="date">
+<textarea id="atObs" placeholder="Observações deste atendimento"></textarea>
+<button class="btn green" onclick="salvarAtendimento()">✓ Salvar atendimento realizado</button>
 </div>
 </section>
 
-<section id="agenda" class="section">
-<h2>📅 Agenda</h2>
+<!-- SERVICOS -->
+<section id="servicos">
+<h2>Serviços e preços</h2>
 <div class="card">
-<h3>Novo agendamento</h3>
-<label>Cliente</label><select id="agCliente"></select>
-<label>Serviço</label><select id="agServico"></select>
-<div class="row">
-<div><label>Data</label><input id="agData" type="date"></div>
-<div><label>Horário</label><input id="agHora" type="time"></div>
+<h3>Adicionar serviço</h3>
+<input id="servNome" placeholder="Nome do serviço">
+<input id="servPreco" type="number" step="0.01" min="0" placeholder="Preço R$">
+<button class="btn" onclick="salvarServico()">Adicionar serviço</button>
 </div>
-<button onclick="salvarAgendamento()">Agendar</button>
-</div>
-<div class="card"><h3>Agendamentos</h3><div id="listaAgenda"></div></div>
+<div id="listaServicos"></div>
 </section>
 
-<section id="servicos" class="section">
-<h2>✂️ Serviços e preços</h2>
-<div class="card">
-<label>Nome do serviço</label><input id="servNome" placeholder="Ex.: Corte">
-<label>Preço (R$)</label><input id="servPreco" type="number" step="0.01">
-<button onclick="salvarServico()">Adicionar serviço</button>
+<!-- FINANCEIRO -->
+<section id="financeiro">
+<h2>Financeiro</h2>
+<div class="stats">
+<div class="stat"><small>Entradas este mês</small><strong id="finEntradas">R$ 0,00</strong></div>
+<div class="stat"><small>Despesas este mês</small><strong id="finDespesas">R$ 0,00</strong></div>
+<div class="stat"><small>Saldo este mês</small><strong id="finSaldo">R$ 0,00</strong></div>
+<div class="stat"><small>Entradas hoje</small><strong id="finHoje">R$ 0,00</strong></div>
 </div>
-<div class="card"><h3>Meus serviços</h3><div id="listaServicos"></div></div>
+<div class="card">
+<h3>Registrar despesa</h3>
+<input id="despNome" placeholder="Descrição da despesa (ex: aluguel)">
+<input id="despValor" type="number" step="0.01" min="0" placeholder="Valor R$">
+<label>Data</label><input id="despData" type="date">
+<button class="btn" onclick="salvarDespesa()">Salvar despesa</button>
+</div>
+<div class="card">
+<h3>Movimentações</h3>
+<div id="listaFinanceiro"></div>
+</div>
 </section>
 
-<section id="financeiro" class="section">
-<h2>💰 Financeiro</h2>
+<!-- HISTORICO -->
+<section id="historico">
+<h2>Histórico de atendimentos</h2>
+<input id="buscaHistorico" placeholder="Buscar cliente..." oninput="renderHistorico()">
+<div id="listaHistorico"></div>
+</section>
+
+<!-- RETORNOS -->
+<section id="retornos">
+<h2>Clientes para retorno</h2>
 <div class="card">
-<label>Tipo de movimentação</label><select id="finTipo"><option value="entrada">Entrada</option><option value="despesa">Despesa</option></select>
-<label>Descrição</label><input id="finDesc" placeholder="Descrição">
-<label>Valor (R$)</label><input id="finValor" type="number" step="0.01">
-<label>Data</label><input id="finData" type="date">
-<button onclick="salvarFin()">Registrar</button>
+<p class="muted">Estimativa baseada no tempo desde o último atendimento. É apenas um lembrete, não um agendamento.</p>
+<label>Considerar cliente atrasado após quantos dias?</label>
+<input id="diasRetorno" type="number" min="1" value="30" onchange="renderRetornos()">
 </div>
-<div class="card"><h3>Movimentações</h3><div id="listaFin"></div></div>
-</section></main>
+<div id="listaRetornos"></div>
+</section>
+
+<!-- BACKUP -->
+<section id="backup">
+<h2>Backup e dados</h2>
+<div class="card">
+<h3>Exportar backup</h3>
+<p class="muted">Baixe um arquivo com seus clientes, serviços, atendimentos e despesas.</p>
+<button class="btn" onclick="exportarBackup()">⬇ Exportar backup</button>
+<hr>
+<h3>Restaurar backup</h3>
+<p class="muted">Escolha um arquivo JSON de backup RH Barber. Isso substituirá os dados atuais.</p>
+<input id="arquivoBackup" type="file" accept=".json,application/json">
+<button class="btn secondary" onclick="importarBackup()">Restaurar backup</button>
+<hr>
+<button class="btn danger" onclick="limparTudo()">Apagar todos os dados do aplicativo</button>
+</div>
+</section>
+</main>
+
+<div id="modal" onclick="if(event.target.id==='modal')fecharModal()">
+<div id="modalContent"></div>
+</div>
+<footer>RH Barber Assistente • Seus dados ficam salvos neste navegador</footer>
+
 <script>
-const ler=(chave,base=[])=>JSON.parse(localStorage.getItem(chave)||JSON.stringify(base));
-let clientes=ler("rh_clientes");
-let agenda=ler("rh_agenda");
-let servicos=ler("rh_servicos",[
-{id:1,nome:"Corte",preco:30},
-{id:2,nome:"Barba",preco:20},
-{id:3,nome:"Corte + Barba",preco:45}
-]);
-let financeiro=ler("rh_financeiro");
-let historico=ler("rh_historico");
+/* ===== DADOS ===== */
+const KEY="rh_barber_v2";
+let dados={clientes:[],servicos:[],atendimentos:[],despesas:[]};
+let fotoTemp="";
+let valorManual=false;
 
-function salvarDados(chave,valor){
-localStorage.setItem(chave,JSON.stringify(valor));
+function moeda(v){return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
+function hoje(){return new Date().toISOString().slice(0,10)}
+function mesAtual(){return hoje().slice(0,7)}
+function salvarDados(){localStorage.setItem(KEY,JSON.stringify(dados))}
+function carregarDados(){
+  try{
+    const salvo=localStorage.getItem(KEY);
+    if(salvo) dados=JSON.parse(salvo);
+    else migrarDadosAntigos();
+  }catch(e){console.error(e)}
+  if(!dados.servicos||!dados.servicos.length){
+    dados.servicos=[
+      {id:uid(),nome:"Corte",preco:35},
+      {id:uid(),nome:"Barba",preco:25},
+      {id:uid(),nome:"Corte + Barba",preco:55},
+      {id:uid(),nome:"Sobrancelha",preco:10},
+      {id:uid(),nome:"Pezinho",preco:10}
+    ];
+  }
+  salvarDados();
 }
-function moeda(v){
-return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+function migrarDadosAntigos(){
+  // Aproveita clientes salvos nas versões anteriores
+  const antigos=JSON.parse(localStorage.getItem("rh_clientes")||"[]");
+  dados.clientes=(Array.isArray(antigos)?antigos:[]).map(c=>({
+    id:c.id||uid(),nome:c.nome||"Cliente",telefone:c.tel||c.telefone||"",
+    foto:c.foto||"",obs:c.obs||"",criado:c.criado||hoje()
+  }));
+  dados.servicos=JSON.parse(localStorage.getItem("rh_servicos")||"[]");
+  const agenda=JSON.parse(localStorage.getItem("rh_agenda")||"[]");
+  dados.atendimentos=JSON.parse(localStorage.getItem("rh_historico")||"[]");
+  dados.despesas=(JSON.parse(localStorage.getItem("rh_financeiro")||"[]")).filter(x=>x.tipo==="despesa");
+  // Não converte agendamentos futuros em atendimentos.
 }
-function hoje(){
-return new Date().toISOString().slice(0,10);
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function abrir(id,btn){
+  document.querySelectorAll("main section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll("#menu button").forEach(b=>b.classList.remove("active"));
+  if(btn)btn.classList.add("active");
+  else{
+    const map={inicio:0,clientes:1,atendimento:2,servicos:3,financeiro:4,historico:5,retornos:6,backup:7};
+    document.querySelectorAll("#menu button")[map[id]]?.classList.add("active");
+  }
+  renderTudo();
+  if(id==="atendimento"){prepararAtendimento()}
 }
-function escapar(s){
-return String(s||"").replace(/[&<>"']/g,m=>({
-"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-}[m]));
+function previewFoto(e){
+  const f=e.target.files[0];if(!f)return;
+  if(f.size>2*1024*1024){alert("Escolha uma foto de até 2 MB.");e.target.value="";return}
+  const r=new FileReader();
+  r.onload=()=>{fotoTemp=r.result;const im=document.getElementById("fotoPreview");im.src=fotoTemp;im.style.display="block"};
+  r.readAsDataURL(f);
 }
-function abrir(id,botao){
-document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-botao.classList.add("active");
-renderTudo();
-}
-document.getElementById("agData").value=hoje();
-document.getElementById("finData").value=hoje();
-
 function salvarCliente(){
-let nome=document.getElementById("clienteNome").value.trim();
-let tel=document.getElementById("clienteTel").value.trim();
-let obs=document.getElementById("clienteObs").value.trim();
-let arquivo=document.getElementById("clienteFoto").files[0];
-if(!nome){alert("Digite o nome do cliente.");return;}
-function concluir(foto){
-clientes.push({id:Date.now(),nome,tel,obs,foto,criado:hoje(),ultimaVisita:""});
-salvarDados("rh_clientes",clientes);
-document.getElementById("clienteNome").value="";
-document.getElementById("clienteTel").value="";
-document.getElementById("clienteObs").value="";
-document.getElementById("clienteFoto").value="";
-renderTudo();
-alert("Cliente cadastrado!");
+  const nome=document.getElementById("clienteNome").value.trim();
+  const telefone=document.getElementById("clienteTelefone").value.trim();
+  const obs=document.getElementById("clienteObs").value.trim();
+  if(!nome){alert("Digite o nome do cliente.");return}
+  dados.clientes.unshift({id:uid(),nome,telefone,foto:fotoTemp,obs,criado:hoje()});
+  salvarDados();fotoTemp="";
+  ["clienteNome","clienteTelefone","clienteObs","clienteFoto"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("fotoPreview").style.display="none";
+  renderTudo();alert("Cliente cadastrado!");
 }
-if(arquivo){
-let reader=new FileReader();
-reader.onload=e=>concluir(e.target.result);
-reader.readAsDataURL(arquivo);
-}else concluir("");
-}
-
 function renderClientes(){
-let termo=(document.getElementById("buscar").value||"").toLowerCase();
-let filtrados=clientes.filter(c=>(c.nome+" "+(c.tel||"")).toLowerCase().includes(termo));
-let el=document.getElementById("listaClientes");
-el.innerHTML=filtrados.length?filtrados.map(c=>`
-<div class="item">
-${c.foto?`<img class="avatar" src="${c.foto}">`:`<div class="avatar">👤</div>`}
-<div><b>${escapar(c.nome)}</b><br><small>${escapar(c.tel||"Sem telefone")}</small><br><small>${escapar(c.obs||"")}</small></div>
-<button class="secondary" onclick="whats('${escapar(c.tel||"")}')">WhatsApp</button>
-<button class="danger" onclick="removerCliente(${c.id})">Excluir</button>
-</div>`).join(""):"<p class='empty'>Nenhum cliente encontrado.</p>";
-document.getElementById("agCliente").innerHTML=clientes.map(c=>`<option value="${c.id}">${escapar(c.nome)}</option>`).join("");
+  const q=(document.getElementById("buscaCliente")?.value||"").toLowerCase();
+  const lista=dados.clientes.filter(c=>(c.nome+" "+c.telefone).toLowerCase().includes(q));
+  const el=document.getElementById("listaClientes");
+  if(!lista.length){el.innerHTML='<div class="empty">Nenhum cliente encontrado.</div>';return}
+  el.innerHTML=lista.map(c=>`
+    <div class="item">
+      ${c.foto?`<img class="avatar" src="${c.foto}">`:`<div class="avatar">${iniciais(c.nome)}</div>`}
+      <div class="info"><strong>${esc(c.nome)}</strong><small>${esc(c.telefone||"Sem telefone")} • ${contAt(c.id)} atendimento(s) • Total ${moeda(totalCliente(c.id))}</small></div>
+      <button class="btn small" onclick="verCliente('${c.id}')">Ver</button>
+    </div>`).join("");
 }
-function removerCliente(id){
-if(!confirm("Excluir este cliente?"))return;
-clientes=clientes.filter(c=>c.id!==id);
-salvarDados("rh_clientes",clientes);
-renderTudo();
+function iniciais(n){return esc((n||"?").split(" ").map(x=>x[0]||"").slice(0,2).join("").toUpperCase())}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function contAt(id){return dados.atendimentos.filter(a=>a.clienteId===id).length}
+function totalCliente(id){return dados.atendimentos.filter(a=>a.clienteId===id).reduce((s,a)=>s+Number(a.valor||0),0)}
+function verCliente(id){
+  const c=dados.clientes.find(c=>c.id===id);if(!c)return;
+  const ats=dados.atendimentos.filter(a=>a.clienteId===id).sort((a,b)=>b.data.localeCompare(a.data));
+  document.getElementById("modalContent").innerHTML=`
+  <button class="btn secondary" onclick="fecharModal()">✕ Fechar</button>
+  <div class="item" style="margin-top:15px">
+  ${c.foto?`<img class="avatar" src="${c.foto}" style="width:80px;height:80px">`:`<div class="avatar" style="width:80px;height:80px">${iniciais(c.nome)}</div>`}
+  <div class="info"><strong>${esc(c.nome)}</strong><small>${esc(c.telefone||"Sem telefone")}</small></div></div>
+  <div class="stats">
+  <div class="stat"><small>Atendimentos</small><strong>${ats.length}</strong></div>
+  <div class="stat"><small>Total gasto</small><strong>${moeda(totalCliente(id))}</strong></div>
+  </div>
+  <div class="card"><small class="muted">Cadastro em ${esc(c.criado||"—")}</small><p>${esc(c.obs||"Sem observações")}</p>
+  ${c.telefone?`<button class="btn green" onclick="whatsapp('${c.telefone}')">Abrir WhatsApp</button>`:""}
+  <button class="btn secondary" onclick="editarCliente('${c.id}')">Editar cliente</button>
+  <button class="btn danger" onclick="excluirCliente('${c.id}')">Excluir cliente</button></div>
+  <h3>Histórico de atendimentos</h3>
+  ${ats.length?ats.map(a=>`<div class="item"><div class="info"><strong>${esc(a.servicosTexto||"Atendimento")}</strong><small>${esc(a.data)} • ${esc(a.pagamento||"")} • ${moeda(a.valor)}</small></div></div>`).join(""):'<div class="empty">Ainda não há atendimentos.</div>'}`;
+  document.getElementById("modal").style.display="block";
 }
-function whats(tel){
-let numero=(tel||"").replace(/\D/g,"");
-if(!numero){alert("Cliente sem telefone cadastrado.");return;}
-if(!numero.startsWith("55"))numero="55"+numero;
-window.open("https://wa.me/"+numero,"_blank");
+function fecharModal(){document.getElementById("modal").style.display="none"}
+function editarCliente(id){
+  const c=dados.clientes.find(c=>c.id===id);if(!c)return;
+  const nome=prompt("Nome do cliente:",c.nome);if(nome===null)return;
+  const telefone=prompt("Telefone:",c.telefone||"");if(telefone===null)return;
+  const obs=prompt("Observações:",c.obs||"");if(obs===null)return;
+  c.nome=nome.trim()||c.nome;c.telefone=telefone;c.obs=obs;
+  salvarDados();fecharModal();renderTudo();
+}
+function excluirCliente(id){
+  if(!confirm("Excluir este cliente? O histórico de atendimentos será mantido nos registros."))return;
+  dados.clientes=dados.clientes.filter(c=>c.id!==id);salvarDados();fecharModal();renderTudo();
+}
+function whatsapp(t){
+  let n=String(t).replace(/\D/g,"");if(n.length>=10&& !n.startsWith("55"))n="55"+n;
+  window.open("https://wa.me/"+n,"_blank");
 }
 
+/* SERVIÇOS */
 function salvarServico(){
-let nome=document.getElementById("servNome").value.trim();
-let preco=Number(document.getElementById("servPreco").value);
-if(!nome||preco<0){alert("Informe o nome e o preço.");return;}
-servicos.push({id:Date.now(),nome,preco});
-salvarDados("rh_servicos",servicos);
-document.getElementById("servNome").value="";
-document.getElementById("servPreco").value="";
-renderTudo();
+  const nome=document.getElementById("servNome").value.trim();
+  const preco=Number(document.getElementById("servPreco").value);
+  if(!nome||preco<0||!Number.isFinite(preco)){alert("Preencha nome e preço.");return}
+  dados.servicos.push({id:uid(),nome,preco});salvarDados();
+  document.getElementById("servNome").value="";document.getElementById("servPreco").value="";
+  renderTudo();
 }
 function renderServicos(){
-document.getElementById("listaServicos").innerHTML=servicos.length?servicos.map(s=>`
-<div class="item"><b>${escapar(s.nome)}</b> — ${moeda(s.preco)}
-<button class="danger" onclick="removerServico(${s.id})">Excluir</button></div>`).join(""):"<p class='empty'>Nenhum serviço cadastrado.</p>";
-document.getElementById("agServico").innerHTML=servicos.map(s=>`<option value="${s.id}">${escapar(s.nome)} - ${moeda(s.preco)}</option>`).join("");
+  const el=document.getElementById("listaServicos");
+  if(!dados.servicos.length){el.innerHTML='<div class="empty">Cadastre seus serviços.</div>';return}
+  el.innerHTML=dados.servicos.map(s=>`<div class="item"><div class="info"><strong>${esc(s.nome)}</strong><small>${moeda(s.preco)}</small></div><button class="btn small secondary" onclick="editarServico('${s.id}')">Editar</button><button class="btn small danger" onclick="excluirServico('${s.id}')">Excluir</button></div>`).join("");
 }
-function removerServico(id){
-if(!confirm("Excluir serviço?"))return;
-servicos=servicos.filter(s=>s.id!==id);
-salvarDados("rh_servicos",servicos);
-renderTudo();
+function editarServico(id){
+  const s=dados.servicos.find(s=>s.id===id);if(!s)return;
+  const n=prompt("Nome:",s.nome);if(n===null)return;
+  const p=prompt("Preço:",s.preco);if(p===null)return;
+  if(!n.trim()||Number(p)<0||!Number.isFinite(Number(p)))return alert("Dados inválidos");
+  s.nome=n.trim();s.preco=Number(p);salvarDados();renderTudo();
 }
-
-function salvarAgendamento(){
-let clienteId=Number(document.getElementById("agCliente").value);
-let servicoId=Number(document.getElementById("agServico").value);
-let data=document.getElementById("agData").value;
-let hora=document.getElementById("agHora").value;
-if(!clienteId||!servicoId||!data||!hora){alert("Preencha cliente, serviço, data e horário.");return;}
-let c=clientes.find(x=>x.id===clienteId);
-let s=servicos.find(x=>x.id===servicoId);
-if(!c||!s){alert("Cadastre um cliente e serviço primeiro.");return;}
-agenda.push({id:Date.now(),clienteId,cliente:c.nome,servico:s.nome,valor:s.preco,data,hora,status:"Agendado"});
-salvarDados("rh_agenda",agenda);
-document.getElementById("agHora").value="";
-renderTudo();
-alert("Agendamento salvo!");
-}
-function concluirAgendamento(id){
-let a=agenda.find(x=>x.id===id);
-if(!a)return;
-if(!confirm("Concluir atendimento e registrar no financeiro?"))return;
-a.status="Concluído";
-historico.push({...a,concluido:hoje()});
-financeiro.push({id:Date.now(),tipo:"entrada",descricao:"Atendimento: "+a.cliente+" - "+a.servico,valor:a.valor,data:hoje()});
-let c=clientes.find(x=>x.id===a.clienteId);
-if(c)c.ultimaVisita=hoje();
-salvarDados("rh_agenda",agenda);
-salvarDados("rh_historico",historico);
-salvarDados("rh_financeiro",financeiro);
-salvarDados("rh_clientes",clientes);
-renderTudo();
-}
-function excluirAgendamento(id){
-if(!confirm("Excluir este agendamento?"))return;
-agenda=agenda.filter(a=>a.id!==id);
-salvarDados("rh_agenda",agenda);
-renderTudo();
-}function salvarFin(){
-let tipo=document.getElementById("finTipo").value;
-let desc=document.getElementById("finDesc").value.trim();
-let valor=Number(document.getElementById("finValor").value);
-let data=document.getElementById("finData").value;
-if(!desc||valor<=0||!data){alert("Preencha descrição, valor e data.");return;}
-financeiro.push({id:Date.now(),tipo,descricao:desc,valor,data});
-salvarDados("rh_financeiro",financeiro);
-document.getElementById("finDesc").value="";
-document.getElementById("finValor").value="";
-renderTudo();
-alert("Movimentação registrada!");
-}
-function removerFin(id){
-if(!confirm("Excluir movimentação?"))return;
-financeiro=financeiro.filter(f=>f.id!==id);
-salvarDados("rh_financeiro",financeiro);
-renderTudo();
+function excluirServico(id){
+  if(!confirm("Excluir serviço?"))return;
+  dados.servicos=dados.servicos.filter(s=>s.id!==id);salvarDados();renderTudo();
 }
 
-function renderAgenda(){
-let ordenada=[...agenda].sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));
-document.getElementById("listaAgenda").innerHTML=ordenada.length?ordenada.map(a=>`
-<div class="item">
-<b>${escapar(a.cliente)}</b><br>
-<small>${escapar(a.servico)} — ${moeda(a.valor)}</small><br>
-<small>${a.data} às ${a.hora}</small><br>
-<span class="badge">${escapar(a.status)}</span>
-${a.status==="Agendado"?`<button onclick="concluirAgendamento(${a.id})">Concluir atendimento</button>`:""}
-<button class="danger" onclick="excluirAgendamento(${a.id})">Excluir</button>
-</div>`).join(""):"<p class='empty'>Nenhum agendamento ainda.</p>";
-let hojeAgenda=ordenada.filter(a=>a.data===hoje()&&a.status==="Agendado");
-document.getElementById("resumoAgenda").innerHTML=hojeAgenda.length?hojeAgenda.map(a=>`<div class="item"><b>${a.hora} — ${escapar(a.cliente)}</b><br><small>${escapar(a.servico)}</small></div>`).join(""):"<p class='empty'>Nenhum atendimento agendado para hoje.</p>";
-document.getElementById("totalHoje").innerText=hojeAgenda.length;
+/* ATENDIMENTO */
+function prepararAtendimento(){
+  const sel=document.getElementById("atCliente");
+  sel.innerHTML='<option value="">Selecione o cliente</option>'+dados.clientes.map(c=>`<option value="${c.id}">${esc(c.nome)}${c.telefone?" — "+esc(c.telefone):""}</option>`).join("");
+  document.getElementById("checkServicos").innerHTML=dados.servicos.map(s=>`<label class="check"><input type="checkbox" value="${s.id}" onchange="calcularAtendimento()"><span>${esc(s.nome)}<br><small>${moeda(s.preco)}</small></span></label>`).join("");
+  document.getElementById("atData").value=hoje();
+  valorManual=false;calcularAtendimento();
+}
+function calcularAtendimento(){
+  if(valorManual)return;
+  const selecionados=[...document.querySelectorAll("#checkServicos input:checked")];
+  const soma=selecionados.reduce((total,ch)=>total+Number(dados.servicos.find(s=>s.id===ch.value)?.preco||0),0);
+  const adicional=Number(document.getElementById("atAdicional").value||0);
+  const desconto=Number(document.getElementById("atDesconto").value||0);
+  const total=Math.max(0,soma+adicional-desconto);
+  document.getElementById("atValor").value=total.toFixed(2);
+  document.getElementById("atResumo").innerText="Serviços: "+moeda(soma)+" • Adicional: "+moeda(adicional)+" • Desconto: "+moeda(desconto);
+}
+function salvarAtendimento(){
+  const clienteId=document.getElementById("atCliente").value;
+  if(!clienteId){alert("Selecione o cliente.");return}
+  const checks=[...document.querySelectorAll("#checkServicos input:checked")];
+  const nomes=checks.map(ch=>dados.servicos.find(s=>s.id===ch.value)?.nome).filter(Boolean);
+  if(!nomes.length&&!Number(document.getElementById("atAdicional").value)){alert("Selecione pelo menos um serviço ou informe um adicional.");return}
+  const valor=Number(document.getElementById("atValor").value);
+  if(!Number.isFinite(valor)||valor<0){alert("Informe um valor válido.");return}
+  const data=document.getElementById("atData").value||hoje();
+  const pagamento=document.getElementById("atPagamento").value;
+  const adicional=Number(document.getElementById("atAdicional").value||0);
+  const desconto=Number(document.getElementById("atDesconto").value||0);
+  dados.atendimentos.unshift({
+    id:uid(),clienteId,data,servicosTexto:nomes.join(" + ")||"Serviço adicional",
+    servicos:nomes,valor,pagamento,adicional,desconto,
+    obs:document.getElementById("atObs").value.trim()
+  });
+  salvarDados();alert("Atendimento registrado!");
+  document.getElementById("atObs").value="";
+  document.getElementById("atAdicional").value="";
+  document.getElementById("atDesconto").value="";
+  valorManual=false;renderTudo();prepararAtendimento();
 }
 
+/* FINANCEIRO */
+function salvarDespesa(){
+  const nome=document.getElementById("despNome").value.trim();
+  const valor=Number(document.getElementById("despValor").value);
+  const data=document.getElementById("despData").value||hoje();
+  if(!nome||!Number.isFinite(valor)||valor<=0){alert("Preencha descrição e valor.");return}
+  dados.despesas.unshift({id:uid(),nome,valor,data});
+  salvarDados();document.getElementById("despNome").value="";document.getElementById("despValor").value="";
+  renderTudo();alert("Despesa registrada.");
+}
 function renderFin(){
-let mes=hoje().slice(0,7);
-let entradas=financeiro.filter(f=>f.tipo==="entrada"&&f.data.startsWith(mes)).reduce((t,f)=>t+Number(f.valor),0);
-let saidas=financeiro.filter(f=>f.tipo==="despesa"&&f.data.startsWith(mes)).reduce((t,f)=>t+Number(f.valor),0);
-document.getElementById("totalEntradas").innerText=moeda(entradas);
-document.getElementById("totalDespesas").innerText=moeda(saidas);
-document.getElementById("listaFin").innerHTML=financeiro.length?[...financeiro].reverse().map(f=>`
-<div class="item">
-<b>${escapar(f.descricao)}</b><br>
-<small>${f.data} • ${f.tipo==="entrada"?"Entrada":"Despesa"}</small><br>
-<strong>${moeda(f.valor)}</strong>
-<button class="danger" onclick="removerFin(${f.id})">Excluir</button>
-</div>`).join(""):"<p class='empty'>Nenhuma movimentação registrada.</p>";
+  const mes=mesAtual(),ats=dados.atendimentos.filter(a=>a.data.startsWith(mes)),des=dados.despesas.filter(d=>d.data.startsWith(mes));
+  const entradas=ats.reduce((s,a)=>s+Number(a.valor||0),0),despesas=des.reduce((s,d)=>s+Number(d.valor||0),0);
+  document.getElementById("finEntradas").innerText=moeda(entradas);
+  document.getElementById("finDespesas").innerText=moeda(despesas);
+  document.getElementById("finSaldo").innerText=moeda(entradas-despesas);
+  document.getElementById("finHoje").innerText=moeda(dados.atendimentos.filter(a=>a.data===hoje()).reduce((s,a)=>s+Number(a.valor||0),0));
+  document.getElementById("mesDespesas").innerText=moeda(despesas);
+  document.getElementById("mesSaldo").innerText=moeda(entradas-despesas);
+  document.getElementById("mesValor").innerText=moeda(entradas);
+  document.getElementById("hojeValor").innerText=moeda(dados.atendimentos.filter(a=>a.data===hoje()).reduce((s,a)=>s+Number(a.valor||0),0));
+  document.getElementById("listaFinanceiro").innerHTML=[
+    ...ats.map(a=>({data:a.data,nome:"Atendimento — "+(clienteNome(a.clienteId)),valor:a.valor,tipo:"entrada"})),
+    ...des.map(d=>({data:d.data,nome:d.nome,valor:d.valor,tipo:"despesa"}))
+  ].sort((a,b)=>b.data.localeCompare(a.data)).map(x=>`<div class="item"><div class="info"><strong>${esc(x.nome)}</strong><small>${esc(x.data)}</small></div><strong style="color:${x.tipo==="entrada"?"var(--green)":"var(--red)"}">${x.tipo==="entrada"?"+":"-"} ${moeda(x.valor)}</strong></div>`).join("")||'<div class="empty">Nenhuma movimentação neste mês.</div>';
+}
+function clienteNome(id){return dados.clientes.find(c=>c.id===id)?.nome||"Cliente removido"}
+
+/* HISTÓRICO */
+function renderHistorico(){
+  const q=(document.getElementById("buscaHistorico").value||"").toLowerCase();
+  const lista=dados.atendimentos.filter(a=>clienteNome(a.clienteId).toLowerCase().includes(q)).sort((a,b)=>b.data.localeCompare(a.data));
+  document.getElementById("listaHistorico").innerHTML=lista.map(a=>`<div class="item"><div class="info"><strong>${esc(clienteNome(a.clienteId))}</strong><small>${esc(a.data)} • ${esc(a.servicosTexto)} • ${esc(a.pagamento)}</small><small>${esc(a.obs||"")}</small></div><strong class="gold">${moeda(a.valor)}</strong><button class="btn small danger" onclick="excluirAtendimento('${a.id}')">Excluir</button></div>`).join("")||'<div class="empty">Nenhum atendimento encontrado.</div>';
+}
+function excluirAtendimento(id){
+  if(!confirm("Excluir este atendimento?"))return;
+  dados.atendimentos=dados.atendimentos.filter(a=>a.id!==id);salvarDados();renderTudo();
 }
 
-function renderHist(){
-document.getElementById("listaHist").innerHTML=historico.length?[...historico].reverse().map(h=>`
-<div class="item">
-<b>${escapar(h.cliente)}</b><br>
-<small>${escapar(h.servico)} • ${h.concluido||h.data}</small><br>
-<strong>${moeda(h.valor)}</strong>
-</div>`).join(""):"<p class='empty'>Nenhum atendimento concluído ainda.</p>";
+/* RETORNOS */
+function diasDesde(data){
+  if(!data)return 9999;
+  const a=new Date(data+"T12:00:00"),b=new Date(hoje()+"T12:00:00");
+  return Math.floor((b-a)/86400000);
+}
+function ultimoAt(id){return dados.atendimentos.filter(a=>a.clienteId===id).sort((a,b)=>b.data.localeCompare(a.data))[0]}
+function renderRetornos(){
+  const limite=Math.max(1,Number(document.getElementById("diasRetorno").value||30));
+  const lista=dados.clientes.map(c=>({c,at:ultimoAt(c.id)})).filter(x=>x.at&&diasDesde(x.at.data)>=limite).sort((a,b)=>diasDesde(b.at.data)-diasDesde(a.at.data));
+  const html=lista.map(x=>`<div class="item">${x.c.foto?`<img class="avatar" src="${x.c.foto}">`:`<div class="avatar">${iniciais(x.c.nome)}</div>`}<div class="info"><strong>${esc(x.c.nome)}</strong><small>Última visita: ${esc(x.at.data)} • ${diasDesde(x.at.data)} dias atrás</small></div>${x.c.telefone?`<button class="btn small green" onclick="whatsapp('${x.c.telefone}')">WhatsApp</button>`:""}</div>`).join("")||'<div class="empty">Nenhum cliente atrasado para retorno.</div>';
+  document.getElementById("listaRetornos").innerHTML=html;
+  document.getElementById("inicioRetornos").innerHTML=lista.slice(0,5).map(x=>`<div class="item"><div class="info"><strong>${esc(x.c.nome)}</strong><small>${diasDesde(x.at.data)} dias sem vir</small></div></div>`).join("")||'<small class="muted">Tudo em dia!</small>';
 }
 
-function renderAlertas(){
-let agora=new Date();
-let atrasados=clientes.filter(c=>{
-if(!c.ultimaVisita)return false;
-let dias=(agora-new Date(c.ultimaVisita+"T12:00:00"))/(1000*60*60*24);
-return dias>=30;
-});
-document.getElementById("alertas").innerHTML=atrasados.length?atrasados.map(c=>{
-let dias=Math.floor((agora-new Date(c.ultimaVisita+"T12:00:00"))/(1000*60*60*24));
-return `<div class="item"><b>${escapar(c.nome)}</b><br><small>Há ${dias} dias sem visitar</small><button onclick="whats('${escapar(c.tel||"")}')">Chamar no WhatsApp</button></div>`;
-}).join(""):"<p class='empty'>Os clientes com 30 dias ou mais sem visita aparecerão aqui. As visitas começam a ser contadas quando os atendimentos forem concluídos pelo aplicativo.</p>";
+/* DASHBOARD */
+function renderInicio(){
+  document.getElementById("totalClientes").innerText=dados.clientes.length;
+  document.getElementById("hojeQtd").innerText=dados.atendimentos.filter(a=>a.data===hoje()).length;
+  const ult=dados.atendimentos.slice().sort((a,b)=>b.data.localeCompare(a.data)).slice(0,5);
+  document.getElementById("ultimosAtendimentos").innerHTML=ult.map(a=>`<div class="item"><div class="info"><strong>${esc(clienteNome(a.clienteId))}</strong><small>${esc(a.data)} • ${esc(a.servicosTexto)}</small></div><strong class="gold">${moeda(a.valor)}</strong></div>`).join("")||'<div class="empty">Nenhum atendimento registrado ainda.</div>';
 }
-
 function renderTudo(){
-document.getElementById("totalClientes").innerText=clientes.length;
-renderClientes();
-renderServicos();
-renderAgenda();
-renderFin();
-renderHist();
-renderAlertas();
+  renderInicio();renderClientes();renderServicos();renderFin();renderHistorico();renderRetornos();prepararAtendimento();
 }
+
+/* BACKUP */
+function exportarBackup(){
+  const blob=new Blob([JSON.stringify({app:"RH Barber Assistente",versao:2,exportadoEm:new Date().toISOString(),dados},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="rh-barber-backup-"+hoje()+".json";a.click();URL.revokeObjectURL(a.href);
+}
+function importarBackup(){
+  const f=document.getElementById("arquivoBackup").files[0];if(!f)return alert("Escolha um arquivo de backup.");
+  const r=new FileReader();r.onload=()=>{
+    try{
+      const obj=JSON.parse(r.result);
+      if(!obj.dados||!Array.isArray(obj.dados.clientes)||!Array.isArray(obj.dados.atendimentos))throw Error("Arquivo inválido");
+      if(!confirm("Restaurar backup? Isso substituirá os dados atuais."))return;
+      dados=obj.dados;salvarDados();renderTudo();alert("Backup restaurado!");
+    }catch(e){alert("Não foi possível restaurar. Arquivo inválido.");}
+  };r.readAsText(f);
+}
+function limparTudo(){
+  if(!confirm("Tem certeza? Isso apagará todos os clientes, atendimentos, serviços e despesas deste navegador."))return;
+  if(!confirm("Última confirmação: deseja realmente apagar tudo?"))return;
+  localStorage.removeItem(KEY);dados={clientes:[],servicos:[],atendimentos:[],despesas:[]};carregarDados();renderTudo();alert("Dados apagados.");
+}
+
+/* INICIALIZAÇÃO */
+carregarDados();
+document.getElementById("despData").value=hoje();
 renderTudo();
 </script>
 </body>
 </html>
-
-<section id="historico" class="section">
-<h2>📋 Histórico de atendimentos</h2>
-<div class="card"><div id="listaHist"></div></div>
-</section>
