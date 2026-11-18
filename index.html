@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,15 +6,20 @@
 <meta name="theme-color" content="#101114">
 <link rel="manifest" href="./manifest.json">
 <title>RH Barber Assistente</title>
+
 <style>
-:root{--bg:#0d0d0d;--panel:#191919;--gold:#d5a644;--text:#f5f5f5;--muted:#999;--border:#333;--green:#176b49;--red:#572727}
+:root{
+ --bg:#0d0d0d;--panel:#191919;--gold:#d5a644;
+ --text:#f5f5f5;--muted:#999;--border:#333;
+ --green:#176b49;--red:#572727
+}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
 header{padding:20px 15px;background:#141414;border-bottom:1px solid var(--border)}
 .brand{font-size:23px;font-weight:bold;color:var(--gold)}
 .brand span{color:white}
 header small{display:block;color:var(--muted);margin-top:5px}
-main{max-width:1000px;margin:auto;padding:14px}
+main{max-width:1100px;margin:auto;padding:14px}
 nav{display:flex;gap:7px;padding:10px;background:#121212;overflow-x:auto;position:sticky;top:0;z-index:5}
 nav button{white-space:nowrap;background:#242424;color:white;border:1px solid #444;padding:11px;border-radius:8px}
 nav button.active{background:var(--gold);color:#111;font-weight:bold}
@@ -34,7 +38,7 @@ button{cursor:pointer}
 .btn.green{background:var(--green);color:white}
 .btn.danger{background:var(--red);color:white}
 .btn.small{padding:8px;font-size:12px}
-.item{display:flex;align-items:center;gap:9px;background:#242424;border-radius:9px;padding:10px;margin:8px 0}
+.item{display:flex;align-items:center;gap:9px;background:#242424;border-radius:9px;padding:10px;margin:8px 0;flex-wrap:wrap}
 .info{flex:1;min-width:0}
 .info strong{display:block;overflow-wrap:anywhere}
 .info small{display:block;color:var(--muted);margin-top:4px}
@@ -51,9 +55,19 @@ button{cursor:pointer}
 #app{display:none}
 #status{font-size:12px;color:var(--muted);margin-top:8px}
 hr{border:0;border-top:1px solid #333;margin:15px 0}
-@media(min-width:700px){.stats{grid-template-columns:repeat(4,1fr)}}
+.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.profile-box{background:#242424;padding:12px;border-radius:9px}
+.profile-box small{display:block;color:var(--muted)}
+.profile-box strong{display:block;color:var(--gold);margin-top:6px}
+.filter-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(min-width:700px){
+ .stats{grid-template-columns:repeat(4,1fr)}
+ .profile-grid{grid-template-columns:repeat(4,1fr)}
+ .filter-grid{grid-template-columns:repeat(4,1fr)}
+}
 </style>
 </head>
+
 <body>
 
 <header>
@@ -74,7 +88,6 @@ hr{border:0;border-top:1px solid #333;margin:15px 0}
  <p id="loginMsg" class="muted"></p>
 </div>
 
-<!-- APLICATIVO -->
 <div id="app">
 <nav id="menu">
  <button class="active" onclick="abrir('inicio',this)">🏠 Início</button>
@@ -88,20 +101,46 @@ hr{border:0;border-top:1px solid #333;margin:15px 0}
 </nav>
 
 <main>
+
+<!-- INÍCIO -->
 <section id="inicio" class="active">
  <h2>Visão geral</h2>
  <div class="stats">
-  <div class="stat"><small>Faturamento hoje</small><strong id="hojeValor">R$ 0,00</strong></div>
-  <div class="stat"><small>Faturamento do mês</small><strong id="mesValor">R$ 0,00</strong></div>
+  <div class="stat"><small>Faturamento hoje</small><strong id="hojeValor">R$ 0</strong></div>
+  <div class="stat"><small>Faturamento do mês</small><strong id="mesValor">R$ 0</strong></div>
   <div class="stat"><small>Atendimentos hoje</small><strong id="hojeQtd">0</strong></div>
   <div class="stat"><small>Total de clientes</small><strong id="totalClientes">0</strong></div>
-  <div class="stat"><small>Despesas do mês</small><strong id="mesDespesas">R$ 0,00</strong></div>
-  <div class="stat"><small>Saldo do mês</small><strong id="mesSaldo">R$ 0,00</strong></div>
+  <div class="stat"><small>Despesas do mês</small><strong id="mesDespesas">R$ 0</strong></div>
+  <div class="stat"><small>Saldo do mês</small><strong id="mesSaldo">R$ 0</strong></div>
  </div>
+
+ <div class="card">
+  <h3>Recebimentos de hoje por forma de pagamento</h3>
+  <div class="stats">
+   <div class="stat"><small>Pix</small><strong id="homePix">R$ 0</strong></div>
+   <div class="stat"><small>Dinheiro</small><strong id="homeDinheiro">R$ 0</strong></div>
+   <div class="stat"><small>Crédito</small><strong id="homeCredito">R$ 0</strong></div>
+   <div class="stat"><small>Débito</small><strong id="homeDebito">R$ 0</strong></div>
+   <div class="stat"><small>Outros</small><strong id="homeOutros">R$ 0</strong></div>
+  </div>
+ </div>
+
+ <div class="card">
+  <h3>Resumo de recebimentos do mês</h3>
+  <div class="stats">
+   <div class="stat"><small>Pix</small><strong id="mesPix">R$ 0</strong></div>
+   <div class="stat"><small>Dinheiro</small><strong id="mesDinheiro">R$ 0</strong></div>
+   <div class="stat"><small>Crédito</small><strong id="mesCredito">R$ 0</strong></div>
+   <div class="stat"><small>Débito</small><strong id="mesDebito">R$ 0</strong></div>
+   <div class="stat"><small>Outros</small><strong id="mesOutros">R$ 0</strong></div>
+  </div>
+ </div>
+
  <div class="card">
   <h3>Últimos atendimentos</h3>
   <div id="ultimos"></div>
  </div>
+
  <div class="card">
   <h3>Clientes que podem precisar voltar</h3>
   <div id="inicioRetornos"></div>
@@ -109,6 +148,7 @@ hr{border:0;border-top:1px solid #333;margin:15px 0}
  </div>
 </section>
 
+<!-- CLIENTES -->
 <section id="clientes">
  <h2>Clientes</h2>
  <div class="card">
@@ -118,17 +158,20 @@ hr{border:0;border-top:1px solid #333;margin:15px 0}
   <label>Foto do cliente</label>
   <input id="clienteFoto" type="file" accept="image/*" onchange="previewFoto(event)">
   <img id="fotoPreview">
-  <textarea id="clienteObs" placeholder="Observações"></textarea>
+  <textarea id="clienteObs" placeholder="Observações gerais"></textarea>
   <button class="btn" onclick="salvarCliente()">Salvar cliente</button>
  </div>
+
  <input id="buscaCliente" placeholder="Buscar cliente..." oninput="renderClientes()">
  <div id="listaClientes"></div>
+ <div id="perfilCliente"></div>
 </section>
 
+<!-- ATENDIMENTO -->
 <section id="atendimento">
  <h2>Registrar atendimento realizado</h2>
  <div class="card">
-  <label>Cliente</label>
+  <label>Cliente (opcional — atendimento avulso)</label>
   <select id="atCliente"></select>
   <h3>Serviços realizados</h3>
   <div id="checkServicos"></div>
@@ -141,17 +184,22 @@ hr{border:0;border-top:1px solid #333;margin:15px 0}
   <p id="atResumo" class="muted"></p>
   <label>Forma de pagamento</label>
   <select id="atPagamento">
-   <option>Pix</option><option>Dinheiro</option><option>Cartão de débito</option><option>Cartão de crédito</option><option>Outro</option>
+   <option>Pix</option>
+   <option>Dinheiro</option>
+   <option>Cartão de débito</option>
+   <option>Cartão de crédito</option>
+   <option>Outro</option>
   </select>
   <label>Data do atendimento</label>
   <input id="atData" type="date">
   <label>Produtos vendidos</label>
   <input id="atProdutos" placeholder="Ex.: Pomada, shampoo">
-  <textarea id="atObs" placeholder="Observações"></textarea>
+  <textarea id="atObs" placeholder="Observações do atendimento"></textarea>
   <button class="btn green" onclick="salvarAtendimento()">Salvar atendimento</button>
  </div>
 </section>
 
+<!-- SERVIÇOS -->
 <section id="servicos">
  <h2>Serviços e preços</h2>
  <div class="card">
@@ -162,13 +210,47 @@ hr{border:0;border-top:1px solid #333;margin:15px 0}
  <div id="listaServicos"></div>
 </section>
 
+<!-- FINANCEIRO -->
 <section id="financeiro">
  <h2>Financeiro</h2>
  <div class="stats">
-  <div class="stat"><small>Entradas do mês</small><strong id="finEntradas">R$ 0,00</strong></div>
-  <div class="stat"><small>Despesas do mês</small><strong id="finDespesas">R$ 0,00</strong></div>
-  <div class="stat"><small>Saldo do mês</small><strong id="finSaldo">R$ 0,00</strong></div>
+  <div class="stat"><small>Entradas filtradas</small><strong id="finEntradas">R$ 0</strong></div>
+  <div class="stat"><small>Despesas filtradas</small><strong id="finDespesas">R$ 0</strong></div>
+  <div class="stat"><small>Saldo filtrado</small><strong id="finSaldo">R$ 0</strong></div>
  </div>
+
+ <div class="card">
+  <h3>Filtrar movimentações</h3>
+  <label>Período rápido</label>
+  <select id="finFiltro" onchange="aplicarFiltroFinanceiro()">
+   <option value="hoje">Hoje</option>
+   <option value="2">Últimos 2 dias</option>
+   <option value="3">Últimos 3 dias</option>
+   <option value="7">Últimos 7 dias</option>
+   <option value="semana">Esta semana</option>
+   <option value="mes">Este mês</option>
+   <option value="30">Últimos 30 dias</option>
+   <option value="personalizado">Personalizado</option>
+   <option value="todos">Todo período</option>
+  </select>
+  <div class="filter-grid">
+   <div><label>De</label><input type="date" id="finDe" onchange="renderFin()"></div>
+   <div><label>Até</label><input type="date" id="finAte" onchange="renderFin()"></div>
+  </div>
+  <button class="btn secondary" onclick="limparFiltroFinanceiro()">Limpar filtro</button>
+ </div>
+
+ <div class="card">
+  <h3>Recebimentos por forma de pagamento</h3>
+  <div class="stats">
+   <div class="stat"><small>Pix</small><strong id="finPix">R$ 0</strong></div>
+   <div class="stat"><small>Dinheiro</small><strong id="finDinheiro">R$ 0</strong></div>
+   <div class="stat"><small>Crédito</small><strong id="finCredito">R$ 0</strong></div>
+   <div class="stat"><small>Débito</small><strong id="finDebito">R$ 0</strong></div>
+   <div class="stat"><small>Outros</small><strong id="finOutros">R$ 0</strong></div>
+  </div>
+ </div>
+
  <div class="card">
   <h3>Registrar despesa</h3>
   <input id="despNome" placeholder="Descrição da despesa">
@@ -177,25 +259,32 @@ hr{border:0;border-top:1px solid #333;margin:15px 0}
   <input id="despData" type="date">
   <button class="btn" onclick="salvarDespesa()">Salvar despesa</button>
  </div>
- <div class="card"><h3>Movimentações do mês</h3><div id="listaFinanceiro"></div></div>
+
+ <div class="card">
+  <h3>Movimentações detalhadas</h3>
+  <div id="listaFinanceiro"></div>
+ </div>
 </section>
 
+<!-- HISTÓRICO -->
 <section id="historico">
  <h2>Histórico de atendimentos</h2>
- <input id="buscaHistorico" placeholder="Buscar cliente..." oninput="renderHistorico()">
+ <input id="buscaHistorico" placeholder="Buscar cliente ou serviço..." oninput="renderHistorico()">
  <div id="listaHistorico"></div>
 </section>
 
+<!-- RETORNOS -->
 <section id="retornos">
  <h2>Clientes para retorno</h2>
  <div class="card">
-  <p class="muted">O aplicativo calcula a média de dias entre as visitas de cada cliente.</p>
+  <p class="muted">A média de dias entre as visitas é calculada automaticamente.</p>
   <label>Prazo de referência para clientes novos (dias)</label>
   <input id="diasRetorno" type="number" min="1" value="30" oninput="renderRetornos()">
  </div>
  <div id="listaRetornos"></div>
 </section>
 
+<!-- BACKUP -->
 <section id="backup">
  <h2>Backup e segurança</h2>
  <div class="card">
@@ -211,13 +300,14 @@ hr{border:0;border-top:1px solid #333;margin:15px 0}
   <button class="btn danger" onclick="sair()">Sair da conta</button>
  </div>
 </section>
+
 <p id="status"></p>
 </main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-/* CONFIGURAÇÃO DO SUPABASE */
+/* SUPABASE */
 const SUPABASE_URL="https://kmauxjdcexsbyhtdtdlz.supabase.co";
 const SUPABASE_KEY="sb_publishable_ri87zE0Sh5q2Ga9ojdHbOw_60CGo8VL";
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
@@ -226,7 +316,9 @@ let usuario=null;
 let dados={clientes:[],servicos:[],atendimentos:[],despesas:[]};
 let fotoTemporaria="";
 let valorManual=false;
+let perfilAberto=null;
 
+/* UTILIDADES */
 function hoje(){
  const d=new Date();
  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
@@ -237,7 +329,25 @@ function moeda(v){return Number(v||0).toLocaleString("pt-BR",{style:"currency",c
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function aviso(msg){document.getElementById("status").innerText=msg}
 function mensagemLogin(msg){document.getElementById("loginMsg").innerText=msg}
+function dataLocal(s){return new Date((s||hoje())+"T12:00:00")}
+function diasEntre(a,b){return Math.round((dataLocal(b)-dataLocal(a))/86400000)}
+function nomeCliente(id){return dados.clientes.find(c=>c.id===id)?.nome||"Cliente avulso"}
+function normalizarPagamento(p){
+ p=(p||"").toLowerCase();
+ if(p.includes("pix"))return "pix";
+ if(p.includes("dinheiro"))return "dinheiro";
+ if(p.includes("crédito")||p.includes("credito"))return "credito";
+ if(p.includes("débito")||p.includes("debito"))return "debito";
+ return "outros";
+}
+function totalForma(lista,forma){
+ return lista.filter(a=>normalizarPagamento(a.pagamento)===forma).reduce((s,a)=>s+Number(a.valor||0),0);
+}
+function formatarForma(forma){
+ return ({pix:"Pix",dinheiro:"Dinheiro",credito:"Cartão de crédito",debito:"Cartão de débito",outros:"Outros"})[forma]||forma;
+}
 
+/* LOGIN */
 async function entrar(){
  const email=document.getElementById("email").value.trim();
  const password=document.getElementById("senha").value;
@@ -247,7 +357,6 @@ async function entrar(){
  if(error)return mensagemLogin(error.message);
  await iniciarAplicativo();
 }
-
 async function cadastrar(){
  const email=document.getElementById("email").value.trim();
  const password=document.getElementById("senha").value;
@@ -256,12 +365,11 @@ async function cadastrar(){
  const {data,error}=await sb.auth.signUp({email,password});
  if(error)return mensagemLogin(error.message);
  if(!data.session){
-  mensagemLogin("Conta criada! Confira seu e-mail para confirmar o cadastro. Depois volte aqui e entre.");
+  mensagemLogin("Conta criada! Confirme seu e-mail e depois entre.");
   return;
  }
  await iniciarAplicativo();
 }
-
 async function sair(){
  if(!confirm("Deseja sair da sua conta?"))return;
  await sb.auth.signOut();
@@ -271,6 +379,7 @@ async function sair(){
  mensagemLogin("Você saiu da sua conta.");
 }
 
+/* CARREGAMENTO */
 async function iniciarAplicativo(){
  const {data:{session}}=await sb.auth.getSession();
  if(!session){document.getElementById("login").style.display="block";return}
@@ -280,18 +389,14 @@ async function iniciarAplicativo(){
  document.getElementById("contaInfo").innerText="Conta conectada: "+usuario.email;
  document.getElementById("despData").value=hoje();
  document.getElementById("atData").value=hoje();
- aviso("Conectando e carregando seus dados...");
+ aviso("Carregando seus dados...");
  try{
   await sb.from("barber_profiles").upsert({id:usuario.id,name:usuario.email});
   await carregarNuvem();
   renderTudo();
   aviso("Seus dados estão sincronizados com a nuvem.");
- }catch(e){
-  aviso("Erro ao carregar os dados: "+e.message);
- }
+ }catch(e){aviso("Erro ao carregar: "+e.message)}
 }
-
-/* CARREGAR DADOS DA NUVEM */
 async function carregarNuvem(){
  const [c,s,a,d]=await Promise.all([
   sb.from("clients").select("*").eq("barber_id",usuario.id),
@@ -301,9 +406,10 @@ async function carregarNuvem(){
  ]);
  for(const r of [c,s,a,d])if(r.error)throw r.error;
 
- dados.clientes=(c.data||[]).map(x=>({
-  id:x.id,nome:x.name,telefone:x.phone||"",obs:x.notes||"",foto:x.photo_url||"",criado:(x.created_at||"").slice(0,10)||hoje()
- }));
+ dados.clientes=(c.data||[]).map(x=>{
+  const info=parseNotas(x.notes||"");
+  return {id:x.id,nome:x.name,telefone:x.phone||"",obs:info.obs||"",foto:x.photo_url||"",criado:(x.created_at||"").slice(0,10)||hoje(),anamnese:info.anamnese||{}};
+ });
  dados.servicos=(s.data||[]).map(x=>({id:x.id,nome:x.name,preco:Number(x.price||0)}));
  dados.atendimentos=(a.data||[]).map(x=>({
   id:x.id,clienteId:x.client_id||"",servicos:x.service_names||[],
@@ -312,9 +418,18 @@ async function carregarNuvem(){
   pagamento:x.payment_method||"",produtos:x.products||"",obs:x.notes||"",
   desconto:Number(x.discount||0),adicional:Number(x.additional||0)
  }));
- dados.despesas=(d.data||[]).map(x=>({
-  id:x.id,nome:x.description,valor:Number(x.amount||0),data:x.expense_date
- }));
+ dados.despesas=(d.data||[]).map(x=>({id:x.id,nome:x.description,valor:Number(x.amount||0),data:x.expense_date}));
+}
+
+/* CLIENTE: COMPATIBILIDADE COM OBSERVAÇÕES ANTIGAS */
+function parseNotas(n){
+ if(n.startsWith("RHBA_PROFILE:")){
+  try{return JSON.parse(n.slice(13))}catch(e){}
+ }
+ return {obs:n,anamnese:{}};
+}
+function salvarNotasCliente(c){
+ return "RHBA_PROFILE:"+JSON.stringify({obs:c.obs||"",anamnese:c.anamnese||{}});
 }
 
 /* SINCRONIZAÇÃO */
@@ -333,18 +448,15 @@ async function sincronizarTabela(tabela,linhas){
   if(error)throw error;
  }
 }
-
 async function salvarDados(){
  if(!usuario)return;
  aviso("Salvando na nuvem...");
  try{
   const clientes=dados.clientes.map(c=>({
    id:c.id,barber_id:usuario.id,name:c.nome,phone:c.telefone,
-   photo_url:c.foto||null,notes:c.obs||null
+   photo_url:c.foto||null,notes:salvarNotasCliente(c)
   }));
-  const servicos=dados.servicos.map(s=>({
-   id:s.id,barber_id:usuario.id,name:s.nome,price:s.preco
-  }));
+  const servicos=dados.servicos.map(s=>({id:s.id,barber_id:usuario.id,name:s.nome,price:s.preco}));
   const atendimentos=dados.atendimentos.map(a=>({
    id:a.id,barber_id:usuario.id,
    client_id:dados.clientes.some(c=>c.id===a.clienteId)?a.clienteId:null,
@@ -354,19 +466,15 @@ async function salvarDados(){
    products:a.produtos||null,discount:a.desconto||0,
    additional:a.adicional||0,attended_on:a.data||hoje()
   }));
-  const despesas=dados.despesas.map(d=>({
-   id:d.id,barber_id:usuario.id,description:d.nome,
-   amount:d.valor,expense_date:d.data
-  }));
+  const despesas=dados.despesas.map(d=>({id:d.id,barber_id:usuario.id,description:d.nome,amount:d.valor,expense_date:d.data}));
   await sincronizarTabela("clients",clientes);
   await sincronizarTabela("services",servicos);
   await sincronizarTabela("visits",atendimentos);
   await sincronizarTabela("expenses",despesas);
   aviso("Salvo e sincronizado com sucesso!");
  }catch(e){
-  console.error(e);
-  aviso("Não foi possível sincronizar: "+e.message);
-  alert("Atenção: houve um erro ao salvar na nuvem. Confira sua conexão. "+e.message);
+  console.error(e);aviso("Erro ao sincronizar: "+e.message);
+  alert("Erro ao salvar na nuvem. Confira sua conexão. "+e.message);
  }
 }
 
@@ -378,123 +486,56 @@ function abrir(id,botao){
  if(botao)botao.classList.add("active");
  else [...document.querySelectorAll("nav button")].find(x=>x.getAttribute("onclick")?.includes("'"+id+"'"))?.classList.add("active");
 }
-function nomeCliente(id){return dados.clientes.find(c=>c.id===id)?.nome||"Cliente removido"}
 
-/* CLIENTES */
-/* NOVA FUNÇÃO: COMPRESSÃO AUTOMÁTICA DE FOTOS */
+/* FOTO */
 async function previewFoto(e){
- const f=e.target.files?.[0];
- if(!f)return;
-
- if(!f.type.startsWith("image/")){
-  alert("Selecione um arquivo de imagem válido.");
-  e.target.value="";
-  return;
- }
-
+ const f=e.target.files?.[0];if(!f)return;
+ if(!f.type.startsWith("image/")){alert("Selecione uma imagem.");e.target.value="";return}
  const preview=document.getElementById("fotoPreview");
- preview.style.display="none";
- fotoTemporaria="";
- aviso("Comprimindo foto, aguarde...");
-
+ preview.style.display="none";fotoTemporaria="";
+ aviso("Comprimindo foto...");
  try{
-  const imagem=new Image();
-  const leitor=new FileReader();
-
-  leitor.onerror=()=>{
-   alert("Não foi possível ler a foto.");
-   aviso("");
-  };
-
+  const imagem=new Image(),leitor=new FileReader();
+  leitor.onerror=()=>alert("Erro ao ler imagem.");
   leitor.onload=()=>{
-   imagem.onerror=()=>{
-    alert("Não foi possível abrir essa imagem.");
-    aviso("");
-   };
-
    imagem.onload=async()=>{
     try{
-     const maxDimensao=800;
-     let largura=imagem.naturalWidth;
-     let altura=imagem.naturalHeight;
-
-     if(largura>maxDimensao||altura>maxDimensao){
-      const escala=Math.min(maxDimensao/largura,maxDimensao/altura);
-      largura=Math.round(largura*escala);
-      altura=Math.round(altura*escala);
-     }
-
-     const canvas=document.createElement("canvas");
-     const ctx=canvas.getContext("2d");
-
-     canvas.width=largura;
-     canvas.height=altura;
-
-     ctx.fillStyle="#ffffff";
-     ctx.fillRect(0,0,largura,altura);
-     ctx.drawImage(imagem,0,0,largura,altura);
-
-     let qualidade=0.82;
-     let blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",qualidade));
-
-     if(!blob)throw new Error("Falha na compressão.");
-
-     // Reduz a qualidade gradualmente caso ainda esteja muito grande
-     while(blob.size>450000&&qualidade>0.35){
-      qualidade-=0.10;
-      blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",qualidade));
-      if(!blob)throw new Error("Falha na compressão.");
-     }
-
-     // Se ainda estiver grande, reduz também a resolução
-     if(blob.size>450000){
-      const escala=0.75;
-      canvas.width=Math.round(largura*escala);
-      canvas.height=Math.round(altura*escala);
-      ctx.fillStyle="#ffffff";
-      ctx.fillRect(0,0,canvas.width,canvas.height);
-      ctx.drawImage(imagem,0,0,canvas.width,canvas.height);
-      blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",0.65));
-      if(!blob)throw new Error("Falha na compressão.");
-     }
-
-     const leitorFinal=new FileReader();
-     leitorFinal.onload=()=>{
-      fotoTemporaria=leitorFinal.result;
-      preview.src=fotoTemporaria;
-      preview.style.display="block";
-      aviso("Foto comprimida e pronta para salvar ("+Math.round(blob.size/1024)+" KB).");
-     };
-     leitorFinal.onerror=()=>{
-      alert("Erro ao preparar a foto.");
-      aviso("");
-     };
-     leitorFinal.readAsDataURL(blob);
-
-    }catch(err){
-     console.error(err);
-     alert("Não foi possível comprimir a foto.");
-     aviso("");
-    }
+     let w=imagem.naturalWidth,h=imagem.naturalHeight;
+     const max=800;
+     if(w>max||h>max){const escala=Math.min(max/w,max/h);w=Math.round(w*escala);h=Math.round(h*escala)}
+     const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;
+     const ctx=canvas.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,w,h);ctx.drawImage(imagem,0,0,w,h);
+     let q=.82,blob=await new Promise(r=>canvas.toBlob(r,"image/jpeg",q));
+     while(blob&&blob.size>450000&&q>.35){q-=.1;blob=await new Promise(r=>canvas.toBlob(r,"image/jpeg",q))}
+     if(!blob)throw Error("Falha de compressão");
+     const final=new FileReader();
+     final.onload=()=>{fotoTemporaria=final.result;preview.src=fotoTemporaria;preview.style.display="block";aviso("Foto pronta ("+Math.round(blob.size/1024)+" KB).")};
+     final.readAsDataURL(blob);
+    }catch(err){alert("Não foi possível comprimir a foto.");aviso("")}
    };
-
+   imagem.onerror=()=>alert("Imagem inválida.");
    imagem.src=leitor.result;
   };
-
   leitor.readAsDataURL(f);
- }catch(err){
-  console.error(err);
-  alert("Erro ao preparar a foto.");
-  aviso("");
- }
+ }catch(e){alert("Erro ao preparar foto.");aviso("")}
 }
 
+/* CADASTRO E PERFIL DE CLIENTE */
+function novoPerfilPadrao(){
+ return {
+  objetivo:"",alergias:"",sensibilidade:"",medicamentos:"",
+  condicoes:"",problemasPele:"",problemasCabelo:"",
+  historicoQuimico:"",preferenciaCorte:"",
+  preferenciabarba:"",observacoes:""
+ };
+}
 async function salvarCliente(){
  const nome=document.getElementById("clienteNome").value.trim();
  if(!nome)return alert("Digite o nome do cliente.");
  dados.clientes.push({
   id:idNovo(),nome,telefone:document.getElementById("clienteTelefone").value.trim(),
-  obs:document.getElementById("clienteObs").value.trim(),foto:fotoTemporaria,criado:hoje()
+  obs:document.getElementById("clienteObs").value.trim(),foto:fotoTemporaria,
+  criado:hoje(),anamnese:novoPerfilPadrao()
  });
  ["clienteNome","clienteTelefone","clienteObs","clienteFoto"].forEach(id=>document.getElementById(id).value="");
  fotoTemporaria="";document.getElementById("fotoPreview").style.display="none";
@@ -506,10 +547,83 @@ function renderClientes(){
  document.getElementById("listaClientes").innerHTML=lista.map(c=>`
  <div class="item">
  ${c.foto?`<img class="avatar" src="${c.foto}">`:`<div class="avatar"></div>`}
- <div class="info"><strong>${esc(c.nome)}</strong><small>${esc(c.telefone||"Sem telefone")}</small><small>${esc(c.obs||"")}</small></div>
+ <div class="info"><strong>${esc(c.nome)}</strong><small>${esc(c.telefone||"Sem telefone")}</small></div>
+ <button class="btn small" onclick="abrirPerfil('${c.id}')">Perfil</button>
  <button class="btn small secondary" onclick="editarCliente('${c.id}')">Editar</button>
  <button class="btn small danger" onclick="excluirCliente('${c.id}')">Excluir</button>
  </div>`).join("")||'<div class="empty">Nenhum cliente cadastrado.</div>';
+}
+function estatisticasCliente(id){
+ const visitas=dados.atendimentos.filter(a=>a.clienteId===id).sort((a,b)=>a.data.localeCompare(b.data));
+ const datas=[...new Set(visitas.map(a=>a.data))];
+ let media=0;
+ if(datas.length>1){let soma=0;for(let i=1;i<datas.length;i++)soma+=diasEntre(datas[i-1],datas[i]);media=Math.round(soma/(datas.length-1))}
+ const ultimo=datas[datas.length-1]||"";
+ const dias=ultimo?diasEntre(ultimo,hoje()):0;
+ const total=visitas.reduce((s,a)=>s+a.a?.valor||0,0);
+ const valorTotal=visitas.reduce((s,a)=>s+Number(a.valor||0),0);
+ const ticket=visitas.length?valorTotal/visitas.length:0;
+ const servicos={};const produtos={};
+ visitas.forEach(a=>{
+  (a.servicos||[]).forEach(s=>servicos[s]=(servicos[s]||0)+1);
+  (a.produtos||"").split(",").map(p=>p.trim()).filter(Boolean).forEach(p=>produtos[p]=(produtos[p]||0)+1);
+ });
+ const maisServicos=Object.entries(servicos).sort((a,b)=>b[1]-a[1]);
+ const maisProdutos=Object.entries(produtos).sort((a,b)=>b[1]-a[1]);
+ return {visitas,datas,media,ultimo,dias,ticket,valorTotal,maisServicos,maisProdutos};
+}
+function abrirPerfil(id){
+ perfilAberto=id;
+ const c=dados.clientes.find(x=>x.id===id);if(!c)return;
+ const st=estatisticasCliente(id);
+ const anam=c.anamnese||novoPerfilPadrao();
+ const maisServicos=st.maisServicos.map(x=>`<div class="item"><div class="info">${esc(x[0])}</div><strong>${x[1]}x</strong></div>`).join("")||'<p class="muted">Ainda não há serviços registrados.</p>';
+ const maisProdutos=st.maisProdutos.map(x=>`<div class="item"><div class="info">${esc(x[0])}</div><strong>${x[1]}x</strong></div>`).join("")||'<p class="muted">Ainda não há produtos registrados.</p>';
+ const historico=st.visitas.slice().sort((a,b)=>b.data.localeCompare(a.data)).map(a=>`
+  <div class="item"><div class="info"><strong>${esc(a.data)}</strong><small>${esc(a.servicosTexto||"Serviço")}</small><small>${esc(a.pagamento)} ${a.produtos?("| Produtos: "+esc(a.produtos)):""}</small></div><strong class="gold">${moeda(a.valor)}</strong></div>
+ `).join("")||'<p class="muted">Nenhum atendimento vinculado.</p>';
+ document.getElementById("perfilCliente").innerHTML=`
+ <div class="card">
+  <h2>Perfil de ${esc(c.nome)}</h2>
+  <button class="btn secondary" onclick="fecharPerfil()">Fechar perfil</button>
+  <div class="item">${c.foto?`<img class="avatar" src="${c.foto}">`:""}
+   <div class="info"><strong>${esc(c.nome)}</strong><small>${esc(c.telefone||"Sem telefone")}</small></div>
+   ${c.telefone?`<button class="btn green small" onclick="whatsappRetorno('${c.id}')">WhatsApp</button>`:""}
+  </div>
+  <div class="stats">
+   <div class="stat"><small>Média de retorno</small><strong>${st.media?st.media+" dias":"Em formação"}</strong></div>
+   <div class="stat"><small>Última visita</small><strong>${st.ultimo||"—"}</strong></div>
+   <div class="stat"><small>Atendimentos</small><strong>${st.visitas.length}</strong></div>
+   <div class="stat"><small>Ticket médio</small><strong>${moeda(st.ticket)}</strong></div>
+   <div class="stat"><small>Total gasto</small><strong>${moeda(st.valorTotal)}</strong></div>
+   <div class="stat"><small>Dias sem vir</small><strong>${st.ultimo?st.dias:"—"}</strong></div>
+  </div>
+  <h3>Serviços que mais realiza</h3>${maisServicos}
+  <h3>Produtos que costuma comprar</h3>${maisProdutos}
+  <h3>Anamnese do cliente</h3>
+  <label>Objetivo / estilo desejado</label><textarea id="p_objetivo">${esc(anam.objetivo)}</textarea>
+  <label>Alergias</label><textarea id="p_alergias">${esc(anam.alergias)}</textarea>
+  <label>Sensibilidade da pele</label><textarea id="p_sensibilidade">${esc(anam.sensibilidade)}</textarea>
+  <label>Medicamentos / tratamentos relevantes</label><textarea id="p_medicamentos">${esc(anam.medicamentos)}</textarea>
+  <label>Condições ou cuidados importantes</label><textarea id="p_condicoes">${esc(anam.condicoes)}</textarea>
+  <label>Problemas / irritações de pele</label><textarea id="p_problemasPele">${esc(anam.problemasPele)}</textarea>
+  <label>Problemas no cabelo / couro cabeludo</label><textarea id="p_problemasCabelo">${esc(anam.problemasCabelo)}</textarea>
+  <label>Histórico de química (tintura, progressiva, etc.)</label><textarea id="p_historicoQuimico">${esc(anam.historicoQuimico)}</textarea>
+  <label>Preferência de corte</label><textarea id="p_preferenciaCorte">${esc(anam.preferenciaCorte)}</textarea>
+  <label>Preferência de barba</label><textarea id="p_preferenciabarba">${esc(anam.preferenciabarba)}</textarea>
+  <label>Observações adicionais</label><textarea id="p_observacoes">${esc(anam.observacoes)}</textarea>
+  <button class="btn green" onclick="salvarAnamnese('${c.id}')">Salvar anamnese</button>
+  <h3>Histórico de atendimentos</h3>${historico}
+ </div>`;
+ document.getElementById("perfilCliente").scrollIntoView({behavior:"smooth"});
+}
+function fecharPerfil(){perfilAberto=null;document.getElementById("perfilCliente").innerHTML=""}
+async function salvarAnamnese(id){
+ const c=dados.clientes.find(x=>x.id===id);if(!c)return;
+ const campos=["objetivo","alergias","sensibilidade","medicamentos","condicoes","problemasPele","problemasCabelo","historicoQuimico","preferenciaCorte","preferenciabarba","observacoes"];
+ c.anamnese={};
+ campos.forEach(k=>c.anamnese[k]=document.getElementById("p_"+k)?.value||"");
+ await salvarDados();alert("Anamnese salva com sucesso!");abrirPerfil(id);
 }
 async function editarCliente(id){
  const c=dados.clientes.find(x=>x.id===id);if(!c)return;
@@ -518,17 +632,19 @@ async function editarCliente(id){
  const o=prompt("Observações:",c.obs);if(o===null)return;
  c.nome=n.trim()||c.nome;c.telefone=t.trim();c.obs=o.trim();
  await salvarDados();renderTudo();
+ if(perfilAberto===id)abrirPerfil(id);
 }
 async function excluirCliente(id){
- if(!confirm("Excluir este cliente? O histórico será mantido."))return;
+ if(!confirm("Excluir este cliente? O histórico dos atendimentos será mantido como cliente avulso."))return;
  dados.clientes=dados.clientes.filter(c=>c.id!==id);
+ dados.atendimentos.forEach(a=>{if(a.clienteId===id)a.clienteId=""});
+ perfilAberto=null;
  await salvarDados();renderTudo();
 }
 
 /* SERVIÇOS */
 async function salvarServico(){
- const nome=document.getElementById("servNome").value.trim();
- const preco=Number(document.getElementById("servPreco").value);
+ const nome=document.getElementById("servNome").value.trim(),preco=Number(document.getElementById("servPreco").value);
  if(!nome||!Number.isFinite(preco)||preco<0)return alert("Informe nome e preço.");
  dados.servicos.push({id:idNovo(),nome,preco});
  document.getElementById("servNome").value="";document.getElementById("servPreco").value="";
@@ -546,19 +662,17 @@ async function editarServico(id){
  const n=prompt("Nome:",s.nome);if(n===null)return;
  const p=prompt("Preço:",s.preco);if(p===null)return;
  if(!n.trim()||!Number.isFinite(Number(p))||Number(p)<0)return alert("Dados inválidos.");
- s.nome=n.trim();s.preco=Number(p);
- await salvarDados();renderTudo();
+ s.nome=n.trim();s.preco=Number(p);await salvarDados();renderTudo();
 }
 async function excluirServico(id){
  if(!confirm("Excluir serviço?"))return;
- dados.servicos=dados.servicos.filter(s=>s.id!==id);
- await salvarDados();renderTudo();
+ dados.servicos=dados.servicos.filter(s=>s.id!==id);await salvarDados();renderTudo();
 }
 
-/* ATENDIMENTOS */
+/* ATENDIMENTO */
 function prepararAtendimento(){
  const sel=document.getElementById("atCliente"),atual=sel.value;
- sel.innerHTML='<option value="">Selecione o cliente</option>'+dados.clientes.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join("");
+ sel.innerHTML='<option value="">Cliente avulso / sem identificação</option>'+dados.clientes.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join("");
  if(dados.clientes.some(c=>c.id===atual))sel.value=atual;
  document.getElementById("checkServicos").innerHTML=dados.servicos.map(s=>`
  <label class="check"><input type="checkbox" value="${s.id}" data-preco="${s.preco}" onchange="calcular()"><span>${esc(s.nome)} — ${moeda(s.preco)}</span></label>
@@ -574,15 +688,13 @@ function calcular(){
  document.getElementById("atResumo").innerText="Serviços: "+moeda(subtotal)+" | Adicional: "+moeda(adicional)+" | Desconto: "+moeda(desconto);
 }
 async function salvarAtendimento(){
- const clienteId=document.getElementById("atCliente").value;
- if(!clienteId)return alert("Selecione um cliente.");
+ const clienteId=document.getElementById("atCliente").value||"";
  const checks=[...document.querySelectorAll("#checkServicos input:checked")];
  const servicos=checks.map(c=>dados.servicos.find(s=>s.id===c.value)?.nome).filter(Boolean);
  const valor=Number(document.getElementById("atValor").value||0);
  if(!servicos.length&&!valor)return alert("Selecione um serviço ou informe o valor.");
  dados.atendimentos.push({
-  id:idNovo(),clienteId,servicos,
-  servicosTexto:servicos.join(", ")||"Serviço não especificado",
+  id:idNovo(),clienteId,servicos,servicosTexto:servicos.join(", ")||"Serviço avulso",
   valor,data:document.getElementById("atData").value||hoje(),
   pagamento:document.getElementById("atPagamento").value,
   produtos:document.getElementById("atProdutos").value.trim(),
@@ -601,7 +713,7 @@ async function excluirAtendimento(id){
  await salvarDados();renderTudo();
 }
 
-/* FINANCEIRO */
+/* DESPESAS */
 async function salvarDespesa(){
  const nome=document.getElementById("despNome").value.trim(),valor=Number(document.getElementById("despValor").value);
  if(!nome||valor<=0)return alert("Informe descrição e valor.");
@@ -614,38 +726,62 @@ async function excluirDespesa(id){
  dados.despesas=dados.despesas.filter(d=>d.id!==id);
  await salvarDados();renderTudo();
 }
+
+/* FINANCEIRO COM FILTROS */
+function aplicarFiltroFinanceiro(){
+ const filtro=document.getElementById("finFiltro").value;
+ const de=document.getElementById("finDe"),ate=document.getElementById("finAte");
+ const hojeD=dataLocal(hoje());
+ if(filtro==="personalizado"){de.disabled=false;ate.disabled=false;return renderFin()}
+ de.disabled=true;ate.disabled=true;
+ let inicio=null,fim=hoje();
+ if(filtro==="hoje")inicio=hoje();
+ else if(["2","3","7","30"].includes(filtro)){const d=new Date(hojeD);d.setDate(d.getDate()-(Number(filtro)-1));inicio=d.toISOString().slice(0,10)}
+ else if(filtro==="semana"){
+  const d=new Date(hojeD);d.setDate(d.getDate()-((d.getDay()+6)%7));inicio=d.toISOString().slice(0,10)
+ }else if(filtro==="mes")inicio=hoje().slice(0,7)+"-01";
+ else if(filtro==="todos"){inicio="";fim=""}
+ de.value=inicio||"";ate.value=fim||"";
+ renderFin();
+}
+function limparFiltroFinanceiro(){
+ document.getElementById("finFiltro").value="todos";
+ document.getElementById("finDe").value="";
+ document.getElementById("finAte").value="";
+ document.getElementById("finDe").disabled=true;
+ document.getElementById("finAte").disabled=true;
+ renderFin();
+}
+function dentroFiltro(data){
+ const de=document.getElementById("finDe").value,ate=document.getElementById("finAte").value;
+ return (!de||data>=de)&&(!ate||data<=ate);
+}
 function renderFin(){
- const mes=mesAtual();
- const ats=dados.atendimentos.filter(a=>a.data.startsWith(mes));
- const des=dados.despesas.filter(d=>d.data.startsWith(mes));
- const entradas=ats.reduce((s,a)=>s+a.valor,0),despesas=des.reduce((s,d)=>s+d.valor,0);
- const hojeTotal=dados.atendimentos.filter(a=>a.data===hoje()).reduce((s,a)=>s+a.valor,0);
- document.getElementById("hojeValor").innerText=moeda(hojeTotal);
- document.getElementById("mesValor").innerText=moeda(entradas);
- document.getElementById("mesDespesas").innerText=moeda(despesas);
- document.getElementById("mesSaldo").innerText=moeda(entradas-despesas);
+ const ats=dados.atendimentos.filter(a=>dentroFiltro(a.data));
+ const des=dados.despesas.filter(d=>dentroFiltro(d.data));
+ const entradas=ats.reduce((s,a)=>s+Number(a.valor||0),0),despesas=des.reduce((s,d)=>s+Number(d.valor||0),0);
  document.getElementById("finEntradas").innerText=moeda(entradas);
  document.getElementById("finDespesas").innerText=moeda(despesas);
  document.getElementById("finSaldo").innerText=moeda(entradas-despesas);
+ ["pix","dinheiro","credito","debito","outros"].forEach(f=>document.getElementById("fin"+f.charAt(0).toUpperCase()+f.slice(1)).innerText=moeda(totalForma(ats,f)));
  const mov=[
- ...ats.map(a=>({id:a.id,data:a.data,nome:"Atendimento — "+nomeCliente(a.clienteId),valor:a.valor,tipo:"at"})),
- ...des.map(d=>({id:d.id,data:d.data,nome:d.nome,valor:d.valor,tipo:"des"}))
+  ...ats.map(a=>({id:a.id,data:a.data,nome:(a.clienteId?nomeCliente(a.clienteId):"Cliente avulso")+" — "+(a.servicosTexto||"Atendimento"),valor:a.valor,tipo:"at",pagamento:a.pagamento})),
+  ...des.map(d=>({id:d.id,data:d.data,nome:d.nome,valor:d.valor,tipo:"des"}))
  ].sort((a,b)=>b.data.localeCompare(a.data));
  document.getElementById("listaFinanceiro").innerHTML=mov.map(m=>`
- <div class="item"><div class="info"><strong>${esc(m.nome)}</strong><small>${m.data}</small></div>
+ <div class="item"><div class="info"><strong>${esc(m.nome)}</strong><small>${esc(m.data)}${m.pagamento?" • "+esc(m.pagamento):""}</small></div>
  <strong class="gold">${m.tipo==="at"?"+":"-"} ${moeda(m.valor)}</strong>
  <button class="btn small danger" onclick="${m.tipo==="at"?"excluirAtendimento":"excluirDespesa"}('${m.id}')">Excluir</button></div>
- `).join("")||'<div class="empty">Nenhuma movimentação.</div>';
+ `).join("")||'<div class="empty">Nenhuma movimentação neste período.</div>';
 }
 
 /* HISTÓRICO */
 function renderHistorico(){
  const busca=(document.getElementById("buscaHistorico")?.value||"").toLowerCase();
- const lista=dados.atendimentos.slice().sort((a,b)=>b.data.localeCompare(a.data)).filter(a=>nomeCliente(a.clienteId).toLowerCase().includes(busca));
+ const lista=dados.atendimentos.slice().sort((a,b)=>b.data.localeCompare(a.data)).filter(a=>(nomeCliente(a.clienteId)+" "+a.servicosTexto).toLowerCase().includes(busca));
  document.getElementById("listaHistorico").innerHTML=lista.map(a=>`
  <div class="item"><div class="info"><strong>${esc(nomeCliente(a.clienteId))}</strong>
- <small>${esc(a.data)} • ${esc(a.servicosTexto)}</small>
- <small>Pagamento: ${esc(a.pagamento)}</small>
+ <small>${esc(a.data)} • ${esc(a.servicosTexto)}</small><small>Pagamento: ${esc(a.pagamento)}</small>
  ${a.produtos?`<small>Produtos: ${esc(a.produtos)}</small>`:""}</div>
  <strong class="gold">${moeda(a.valor)}</strong>
  <button class="btn small danger" onclick="excluirAtendimento('${a.id}')">Excluir</button></div>
@@ -653,17 +789,12 @@ function renderHistorico(){
 }
 
 /* RETORNOS */
-function estatisticasCliente(id){
+function estatisticasRetorno(id){
  const visitas=dados.atendimentos.filter(a=>a.clienteId===id).sort((a,b)=>a.data.localeCompare(b.data));
  const datas=[...new Set(visitas.map(a=>a.data))];
  let media=0;
- if(datas.length>1){
-  let soma=0;
-  for(let i=1;i<datas.length;i++)soma+=(new Date(datas[i]+"T12:00:00")-new Date(datas[i-1]+"T12:00:00"))/86400000;
-  media=Math.round(soma/(datas.length-1));
- }
- const ultimo=datas[datas.length-1]||"";
- const dias=ultimo?Math.floor((new Date(hoje()+"T12:00:00")-new Date(ultimo+"T12:00:00"))/86400000):0;
+ if(datas.length>1){let soma=0;for(let i=1;i<datas.length;i++)soma+=diasEntre(datas[i-1],datas[i]);media=Math.round(soma/(datas.length-1))}
+ const ultimo=datas[datas.length-1]||"",dias=ultimo?diasEntre(ultimo,hoje()):0;
  return {media,ultimo,dias};
 }
 function whatsappRetorno(id){
@@ -674,28 +805,41 @@ function whatsappRetorno(id){
 }
 function renderRetornos(){
  const base=Math.max(1,Number(document.getElementById("diasRetorno")?.value||30));
- const lista=dados.clientes.map(c=>({c,st:estatisticasCliente(c.id)})).filter(x=>x.st.ultimo).filter(x=>x.st.dias>=Math.floor((x.st.media||base)*.8)).sort((a,b)=>b.st.dias-a.st.dias);
- const html=lista.map(x=>`
+ const lista=dados.clientes.map(c=>({c,st:estatisticasRetorno(c.id)})).filter(x=>x.st.ultimo).filter(x=>x.st.dias>=Math.floor((x.st.media||base)*.8)).sort((a,b)=>b.st.dias-a.st.dias);
+ document.getElementById("listaRetornos").innerHTML=lista.map(x=>`
  <div class="item">${x.c.foto?`<img class="avatar" src="${x.c.foto}">`:""}
- <div class="info"><strong>${esc(x.c.nome)}</strong>
- <small>Última visita: ${x.st.ultimo} • ${x.st.dias} dias sem vir</small>
- <small>Média de retorno: ${x.st.media?x.st.media+" dias":"em formação"}</small></div>
+ <div class="info"><strong>${esc(x.c.nome)}</strong><small>Última visita: ${x.st.ultimo} • ${x.st.dias} dias sem vir</small><small>Média: ${x.st.media?x.st.media+" dias":"Em formação"}</small></div>
  ${x.c.telefone?`<button class="btn small green" onclick="whatsappRetorno('${x.c.id}')">WhatsApp</button>`:""}
+ <button class="btn small secondary" onclick="abrirPerfil('${x.c.id}')">Perfil</button>
  </div>`).join("")||'<div class="empty">Nenhum cliente precisa voltar por enquanto.</div>';
- document.getElementById("listaRetornos").innerHTML=html;
  document.getElementById("inicioRetornos").innerHTML=lista.slice(0,4).map(x=>`<div class="item"><div class="info"><strong>${esc(x.c.nome)}</strong><small>${x.st.dias} dias sem vir</small></div></div>`).join("")||'<p class="muted">Nenhum retorno pendente.</p>';
 }
 
-/* DASHBOARD E BACKUP */
+/* DASHBOARD */
 function renderInicio(){
+ const atendHoje=dados.atendimentos.filter(a=>a.data===hoje());
+ const mes=dados.atendimentos.filter(a=>a.data.startsWith(mesAtual()));
+ const desp=dados.despesas.filter(d=>d.data.startsWith(mesAtual())).reduce((s,d)=>s+d.valor,0);
+ const totalHoje=atendHoje.reduce((s,a)=>s+a.valor,0);
+ const totalMes=mes.reduce((s,a)=>s+a.valor,0);
  document.getElementById("totalClientes").innerText=dados.clientes.length;
- document.getElementById("hojeQtd").innerText=dados.atendimentos.filter(a=>a.data===hoje()).length;
+ document.getElementById("hojeQtd").innerText=atendHoje.length;
+ document.getElementById("hojeValor").innerText=moeda(totalHoje);
+ document.getElementById("mesValor").innerText=moeda(totalMes);
+ document.getElementById("mesDespesas").innerText=moeda(desp);
+ document.getElementById("mesSaldo").innerText=moeda(totalMes-desp);
+ ["pix","dinheiro","credito","debito","outros"].forEach(f=>{
+  document.getElementById("home"+f.charAt(0).toUpperCase()+f.slice(1)).innerText=moeda(totalForma(atendHoje,f));
+  document.getElementById("mes"+f.charAt(0).toUpperCase()+f.slice(1)).innerText=moeda(totalForma(mes,f));
+ });
  const ult=dados.atendimentos.slice().sort((a,b)=>b.data.localeCompare(a.data)).slice(0,5);
- document.getElementById("ultimos").innerHTML=ult.map(a=>`<div class="item"><div class="info"><strong>${esc(nomeCliente(a.clienteId))}</strong><small>${a.data} • ${esc(a.servicosTexto)}</small></div><strong class="gold">${moeda(a.valor)}</strong></div>`).join("")||'<div class="empty">Nenhum atendimento registrado.</div>';
+ document.getElementById("ultimos").innerHTML=ult.map(a=>`<div class="item"><div class="info"><strong>${esc(nomeCliente(a.clienteId))}</strong><small>${esc(a.data)} • ${esc(a.servicosTexto)}</small></div><strong class="gold">${moeda(a.valor)}</strong></div>`).join("")||'<div class="empty">Nenhum atendimento registrado.</div>';
 }
 function renderTudo(){
  renderInicio();renderClientes();renderServicos();renderFin();renderHistorico();renderRetornos();prepararAtendimento();
 }
+
+/* BACKUP */
 function exportarBackup(){
  const blob=new Blob([JSON.stringify({app:"RH Barber Assistente",dados},null,2)],{type:"application/json"});
  const url=URL.createObjectURL(blob),a=document.createElement("a");
@@ -708,20 +852,21 @@ function importarBackup(){
   try{
    const obj=JSON.parse(r.result);
    if(!obj.dados||!Array.isArray(obj.dados.clientes)||!Array.isArray(obj.dados.servicos)||!Array.isArray(obj.dados.atendimentos)||!Array.isArray(obj.dados.despesas))throw Error();
-   if(!confirm("Restaurar este backup e substituir os dados da sua conta?"))return;
-   dados=obj.dados;
-   const mapa={};
+   if(!confirm("Restaurar backup e substituir os dados da conta?"))return;
+   dados=obj.dados;const mapa={};
    dados.clientes.forEach(c=>{const antigo=c.id;c.id=idNovo();mapa[antigo]=c.id});
    dados.servicos.forEach(s=>s.id=idNovo());
-   dados.atendimentos.forEach(a=>{a.id=idNovo();a.clienteId=mapa[a.clienteId]||a.clienteId});
+   dados.atendimentos.forEach(a=>{a.id=idNovo();a.clienteId=mapa[a.clienteId]||""});
    dados.despesas.forEach(d=>d.id=idNovo());
    await salvarDados();renderTudo();alert("Backup restaurado!");
-  }catch(e){alert("Não foi possível ler esse backup.");}
+  }catch(e){alert("Não foi possível ler esse backup.")}
  };
  r.readAsText(f);
 }
 
 /* INICIALIZAÇÃO */
+document.getElementById("atValor").addEventListener("input",()=>valorManual=true);
+document.getElementById("atValor").addEventListener("change",()=>valorManual=true);
 (async()=>{
  const {data:{session}}=await sb.auth.getSession();
  if(session)await iniciarAplicativo();
