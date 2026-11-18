@@ -60,6 +60,48 @@ hr{border:0;border-top:1px solid #333;margin:15px 0}
 .profile-box small{display:block;color:var(--muted)}
 .profile-box strong{display:block;color:var(--gold);margin-top:6px}
 .filter-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+
+/* SELETOR VISUAL DE CLIENTES NO ATENDIMENTO */
+.client-picker{position:relative;margin:5px 0 12px}
+.client-picker-trigger{
+ width:100%;
+ display:flex;
+ align-items:center;
+ gap:10px;
+ text-align:left;
+ background:#242424;
+ color:white;
+ border:1px solid #444;
+ border-radius:10px;
+ padding:10px;
+}
+.client-picker-trigger .avatar{width:46px;height:46px}
+.client-picker-name{flex:1;min-width:0;font-weight:bold;overflow-wrap:anywhere}
+.client-picker-hint{font-size:12px;color:#aaa;font-weight:normal;display:block;margin-top:3px}
+.client-picker-list{
+ display:none;
+ margin-top:8px;
+ border:1px solid #444;
+ border-radius:10px;
+ background:#191919;
+ max-height:280px;
+ overflow-y:auto;
+ padding:6px;
+}
+.client-picker-list.open{display:block}
+.client-picker-option{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ padding:9px;
+ border-radius:8px;
+ cursor:pointer;
+}
+.client-picker-option:hover,.client-picker-option.selected{background:#333}
+.client-picker-option .avatar{width:46px;height:46px}
+.client-picker-option .client-picker-name{font-weight:bold}
+.client-picker-option small{display:block;color:#aaa;margin-top:3px}
+
 @media(min-width:700px){
  .stats{grid-template-columns:repeat(4,1fr)}
  .profile-grid{grid-template-columns:repeat(4,1fr)}
@@ -172,7 +214,8 @@ hr{border:0;border-top:1px solid #333;margin:15px 0}
  <h2>Registrar atendimento realizado</h2>
  <div class="card">
   <label>Cliente (opcional — atendimento avulso)</label>
-  <select id="atCliente"></select>
+  <select id="atCliente" style="display:none"></select>
+  <div id="atClienteVisual" class="client-picker"></div>
   <h3>Serviços realizados</h3>
   <div id="checkServicos"></div>
   <label>Valor adicional</label>
@@ -197,9 +240,7 @@ hr{border:0;border-top:1px solid #333;margin:15px 0}
   <textarea id="atObs" placeholder="Observações do atendimento"></textarea>
   <button class="btn green" onclick="salvarAtendimento()">Salvar atendimento</button>
  </div>
-</section>
-
-<!-- SERVIÇOS -->
+</section><!-- SERVIÇOS -->
 <section id="servicos">
  <h2>Serviços e preços</h2>
  <div class="card">
@@ -518,9 +559,7 @@ async function previewFoto(e){
   };
   leitor.readAsDataURL(f);
  }catch(e){alert("Erro ao preparar foto.");aviso("")}
-}
-
-/* CADASTRO E PERFIL DE CLIENTE */
+}/* CADASTRO E PERFIL DE CLIENTE */
 function novoPerfilPadrao(){
  return {
   objetivo:"",alergias:"",sensibilidade:"",medicamentos:"",
@@ -560,7 +599,6 @@ function estatisticasCliente(id){
  if(datas.length>1){let soma=0;for(let i=1;i<datas.length;i++)soma+=diasEntre(datas[i-1],datas[i]);media=Math.round(soma/(datas.length-1))}
  const ultimo=datas[datas.length-1]||"";
  const dias=ultimo?diasEntre(ultimo,hoje()):0;
- const total=visitas.reduce((s,a)=>s+a.a?.valor||0,0);
  const valorTotal=visitas.reduce((s,a)=>s+Number(a.valor||0),0);
  const ticket=visitas.length?valorTotal/visitas.length:0;
  const servicos={};const produtos={};
@@ -669,15 +707,91 @@ async function excluirServico(id){
  dados.servicos=dados.servicos.filter(s=>s.id!==id);await salvarDados();renderTudo();
 }
 
-/* ATENDIMENTO */
+/* ATENDIMENTO - SELETOR VISUAL COM FOTO */
 function prepararAtendimento(){
- const sel=document.getElementById("atCliente"),atual=sel.value;
- sel.innerHTML='<option value="">Cliente avulso / sem identificação</option>'+dados.clientes.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join("");
- if(dados.clientes.some(c=>c.id===atual))sel.value=atual;
+ const sel=document.getElementById("atCliente");
+ const atual=sel.value;
+
+ sel.innerHTML=
+ '<option value="">Cliente avulso / sem identificação</option>'+
+ dados.clientes.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join("");
+
+ if(dados.clientes.some(c=>c.id===atual)){
+  sel.value=atual;
+ }
+
+ renderSeletorClientesAtendimento();
+
  document.getElementById("checkServicos").innerHTML=dados.servicos.map(s=>`
- <label class="check"><input type="checkbox" value="${s.id}" data-preco="${s.preco}" onchange="calcular()"><span>${esc(s.nome)} — ${moeda(s.preco)}</span></label>
+  <label class="check">
+   <input type="checkbox" value="${s.id}" data-preco="${s.preco}" onchange="calcular()">
+   <span>${esc(s.nome)} — ${moeda(s.preco)}</span>
+  </label>
  `).join("")||'<p class="muted">Cadastre serviços primeiro.</p>';
+
+ calcular();
 }
+
+function renderSeletorClientesAtendimento(){
+ const wrap=document.getElementById("atClienteVisual");
+ const sel=document.getElementById("atCliente");
+ if(!wrap||!sel)return;
+
+ const escolhido=dados.clientes.find(c=>c.id===sel.value);
+
+ function avatarCliente(c){
+  return c.foto
+   ? `<img class="avatar" src="${c.foto}" alt="Foto de ${esc(c.nome)}">`
+   : `<div class="avatar" style="display:flex;align-items:center;justify-content:center;font-size:18px">👤</div>`;
+ }
+
+ wrap.innerHTML=`
+  <button type="button" class="client-picker-trigger" onclick="toggleSeletorClientesAtendimento()">
+   ${escolhido?avatarCliente(escolhido):'<div class="avatar" style="display:flex;align-items:center;justify-content:center;font-size:18px">👤</div>'}
+   <span class="client-picker-name">
+    ${escolhido?esc(escolhido.nome):"Cliente avulso"}
+    <small class="client-picker-hint">
+     ${escolhido?esc(escolhido.telefone||"Cliente selecionado"):"Toque para selecionar um cliente"}
+    </small>
+   </span>
+   <span>⌄</span>
+  </button>
+
+  <div class="client-picker-list" id="atClienteLista">
+
+   <div class="client-picker-option ${!sel.value?'selected':''}" onclick="selecionarClienteAtendimento('')">
+    <div class="avatar" style="display:flex;align-items:center;justify-content:center;font-size:18px">👤</div>
+    <span>
+     <span class="client-picker-name">Cliente avulso</span>
+     <small>Atendimento sem identificação</small>
+    </span>
+   </div>
+
+   ${dados.clientes.map(c=>`
+    <div class="client-picker-option ${c.id===sel.value?'selected':''}" onclick="selecionarClienteAtendimento('${c.id}')">
+     ${avatarCliente(c)}
+     <span>
+      <span class="client-picker-name">${esc(c.nome)}</span>
+      <small>${esc(c.telefone||"Sem telefone")}</small>
+     </span>
+    </div>
+   `).join("")||'<div class="empty">Nenhum cliente cadastrado.</div>'}
+
+  </div>
+ `;
+}
+
+function toggleSeletorClientesAtendimento(){
+ document.getElementById("atClienteLista")?.classList.toggle("open");
+}
+
+function selecionarClienteAtendimento(id){
+ const sel=document.getElementById("atCliente");
+ sel.value=id;
+ renderSeletorClientesAtendimento();
+ calcular();
+}
+
 function calcular(){
  const checks=[...document.querySelectorAll("#checkServicos input:checked")];
  const subtotal=checks.reduce((t,c)=>t+Number(c.dataset.preco),0);
